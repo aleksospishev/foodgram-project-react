@@ -20,14 +20,14 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'foodgram.apps.FoodgramConfig',
+    'users.apps.UsersConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'django_filters'
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -71,14 +71,21 @@ CACHES = {
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
+#         'NAME': os.getenv('DB_NAME', default='postgreasql'),
+#         'USER': os.getenv('POSTGRES_USER', default='postgreasql'),
+#         'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgreasql'),
+#         'HOST': os.getenv('DB_HOST', default='db'),
+#         'PORT': os.getenv('DB_PORT', default='1111')
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
-        'NAME': os.getenv('DB_NAME', default='postgreasql'),
-        'USER': os.getenv('POSTGRES_USER', default='postgreasql'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgreasql'),
-        'HOST': os.getenv('DB_HOST', default='db'),
-        'PORT': os.getenv('DB_PORT', default='1111')
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -147,6 +154,12 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-AUTH_USER_MODEL = 'users.User'
+# AUTH_USER_MODEL = 'users.User'
 
 BANNED_NAMES = ['me']
+
+LENG_DATA_USER = 50
+LENG_EMAIL = 100
+LENG_FIRST_NAME = 50
+LENG_SECOND_NAME = 50
+
