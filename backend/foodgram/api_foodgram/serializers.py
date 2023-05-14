@@ -17,7 +17,10 @@ class ImageSerializer(serializers.ImageField):
         if isinstance(data, str) and data.startswith('data:image'):
             format, imgstr = data.split(';base64,')
             ext = format.split('/')[-1]
-            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+            return ContentFile(
+                b64decode(imgstr), name=uuid.uuid4().hex + "." + ext
+            )
+            # data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
         return super().to_internal_value(data)
 
 
@@ -116,11 +119,11 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all(),
         many=True
     )
-    review_author = serializers.IntegerField(
-        min_value=1,
-        max_value=5,
-        required=False
-    )
+    # review_author = serializers.IntegerField(
+    #     min_value=1,
+    #     max_value=5,
+    #     required=False
+    # )
     image = ImageSerializer(required=False)
 
     class Meta:
@@ -129,7 +132,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             'name',
             'cooking_time',
             'image',
-            'review_author',
+            # 'review_author',
             'tags',
             'text'
         )
@@ -158,21 +161,21 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         data_ingredients = validated_data.pop('ingredients')
-        data_tag = validated_data.pop('tags')
+        data_tags_id = validated_data.pop('tags')
         # data_review = validated_data.pop('review_author')
         recipe_create = Recipe.objects.create(**validated_data)
         self.create_tag_ingredient(
-             data_ingredients, data_tag, recipe_create,)
+             data_ingredients, data_tags_id, recipe_create,)
         return recipe_create
 
     def update(self, instance, validated_data):
         data_ingredients = validated_data.pop('ingredients')
-        data_tag = validated_data.pop('tags')
+        data_tags_id = validated_data.pop('tags')
         # data_review = validated_data.pop('review_author')
         TagsRecipe.objects.filter(recipe=instance).delete()
         IngredientsRecipe.objects.filter(recipe=instance).delete()
         # Recipe.objects.filter(recipe=instance)
-        self.create_tag_ingredient(data_ingredients, data_tag, instance)
+        self.create_tag_ingredient(data_ingredients, data_tags_id, instance)
         return super().update(instance, validated_data)
 
     def validate(self, data):
@@ -193,64 +196,62 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return data
 
 
-class CommentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = (
-            'id',
-            'author',
-            'comment'
-        )
-
-
-class ReviewSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(
-        slug_field='username',
-        read_only=True,
-        many=False,
-    )
-    review = serializers.IntegerField(
-        min_value=1,
-        max_value=5
-    )
-    tasty_review = serializers.IntegerField(
-        min_value=1,
-        max_value=5
-    )
-    cooking_review = serializers.IntegerField(
-        min_value=1,
-        max_value=5
-    )
-
-    class Meta:
-        model = Review
-        fields = (
-            'id',
-            'author',
-            'review',
-            'cooking_review',
-            'tasty_review'
-        )
-
-    def validate(self, data):
-        recipe_id = self.context['recipe.id']
-        review_exists = Review.objects.filter(
-            author=self.context['request'].user,
-            recipe=recie_id
-        ).count()
-        recipe = get_object_or_404(
-            Recipe,
-            id=recipe_id
-        )
-        if not request or request.user.is_anonymous:
-            return False
-        if self.context['request'].method == 'POST' and review_exists:
-            raise serializers.ValidationError(
-                f'Отзыв на {recipe.name} уже существует'
-            )
-        return data
-
-
+# class CommentSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Comment
+#         fields = (
+#             'id',
+#             'author',
+#             'comment'
+#         )
+#
+#
+# class ReviewSerializer(serializers.ModelSerializer):
+#     author = serializers.SlugRelatedField(
+#         slug_field='username',
+#         read_only=True,
+#         many=False,
+#     )
+#     review = serializers.IntegerField(
+#         min_value=1,
+#         max_value=5
+#     )
+#     tasty_review = serializers.IntegerField(
+#         min_value=1,
+#         max_value=5
+#     )
+#     cooking_review = serializers.IntegerField(
+#         min_value=1,
+#         max_value=5
+#     )
+#
+#     class Meta:
+#         model = Review
+#         fields = (
+#             'id',
+#             'author',
+#             'review',
+#             'cooking_review',
+#             'tasty_review'
+#         )
+#
+#     def validate(self, data):
+#         recipe_id = self.context['recipe.id']
+#         review_exists = Review.objects.filter(
+#             author=self.context['request'].user,
+#             recipe=recie_id
+#         ).count()
+#         recipe = get_object_or_404(
+#             Recipe,
+#             id=recipe_id
+#         )
+#         if not request or request.user.is_anonymous:
+#             return False
+#         if self.context['request'].method == 'POST' and review_exists:
+#             raise serializers.ValidationError(
+#                 f'Отзыв на {recipe.name} уже существует'
+#             )
+#         return data
 class SubscribeSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(read_only=True)
     username = serializers.CharField(read_only=True)
