@@ -8,7 +8,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv('SECRET_KEY', default='None')
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -65,6 +65,7 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
+
 
 DATABASES = {
     'default': {
@@ -136,13 +137,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
-
-    'DEFAULT_PAGINATION_CLASS':
-        'rest_framework.pagination.PageNumberPagination',
-    "PAGE_SIZE": 10,
-    'DEFAULT_FILTER_BACKENDS': [
-        'django_filters.rest_framework.DjangoFilterBackend',
-    ]
 }
 
 DJOSER = {
@@ -166,3 +160,4 @@ LENG_FIRST_NAME = 150
 LENG_LAST_NAME = 150
 LENG_CHARFIELD = 200
 LENG_HEX = 7
+PAGE_SIZE = 6

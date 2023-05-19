@@ -11,7 +11,7 @@ class AuthorOnly(permissions.BasePermission):
         return obj.user == request.user or request.user.is_staff
 
 
-class AuthorOrReadOnly(permissions.BasePermission):
+class AuthorAdminOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         return (
             request.method in permissions.SAFE_METHODS
@@ -19,11 +19,10 @@ class AuthorOrReadOnly(permissions.BasePermission):
         )
 
     def has_object_permissions(self, request, obj, view):
-        return (
-            obj.author == request.user or
-            request.user.is_staff
-            or view.action == 'retrieve'
-        )
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return (obj.author == request.user
+                or request.user.is_superuser)
 
 
 class UserMeOrUserProfile(permissions.BasePermission):
