@@ -108,7 +108,7 @@ class SubscriptionsViewSet(ListModelViewSet):
     def get_queryset(self):
         subscriptions_queryset = self.request.user.subscriber.all()
         subscriptions_list = subscriptions_queryset.values_list(
-            'is_subscribed', flat=True
+            'author', flat=True
         )
         return User.objects.filter(id__in=subscriptions_list)
 
