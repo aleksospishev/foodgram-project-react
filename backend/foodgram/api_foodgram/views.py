@@ -10,9 +10,10 @@ from api_foodgram.filters import IngredientSearchFilter, RecipeFilter
 from api_foodgram.models import Basket, FavoriteRecipe, Ingredient, Recipe, Tag
 from api_foodgram.pagination import PagePagination
 from api_foodgram.permissions import AuthorAdminOrReadOnly, SubscribeUser
-from api_foodgram.serializers import (  # FavoriteRecipeSerializer,
-    BasketSerializer, IngredientSerializer, RecipeCreateSerializer,
-    RecipeHelpSerializer, RecipeSerializer, TagSerializer)
+from api_foodgram.serializers import (BasketSerializer, IngredientSerializer,
+                                      RecipeCreateSerializer,
+                                      RecipeHelpSerializer, RecipeSerializer,
+                                      TagSerializer)
 from api_foodgram.utils import get_basket
 
 
