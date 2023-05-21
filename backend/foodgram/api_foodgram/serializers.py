@@ -4,11 +4,11 @@ import uuid
 from django.core.files.base import ContentFile
 from django.shortcuts import get_object_or_404
 from rest_framework import mixins, serializers, status, viewsets
+from users.models import Subscribe, User
+from users.serializers import CustomUserSerializer
 
 from api_foodgram.models import (Basket, FavoriteRecipe, Ingredient,
                                  IngredientsRecipe, Recipe, Tag)
-from users.models import Subscribe, User
-from users.serializers import CustomUserSerializer
 
 
 class ImageSerializer(serializers.ImageField):

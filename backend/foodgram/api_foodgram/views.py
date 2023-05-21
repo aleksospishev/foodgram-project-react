@@ -3,6 +3,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from users.models import Subscribe, User
+from users.serializers import SubscribeSerializer
 
 from api_foodgram.filters import IngredientSearchFilter, RecipeFilter
 from api_foodgram.models import Basket, FavoriteRecipe, Ingredient, Recipe, Tag
@@ -16,8 +18,6 @@ from api_foodgram.serializers import (BasketSerializer,
                                       RecipeHelpSerializer, RecipeSerializer,
                                       TagSerializer)
 from api_foodgram.utils import get_basket
-from users.models import Subscribe, User
-from users.serializers import SubscribeSerializer
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
