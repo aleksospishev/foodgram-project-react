@@ -23,7 +23,7 @@ class IngredientLine(admin.TabularInline):
 
 
 class RecipeAdmin(admin.ModelAdmin):
-    inlines = [IngredientLine,]
+    inlines = [IngredientLine, ]
     list_display = ['pk',
                     'name',
                     'text',

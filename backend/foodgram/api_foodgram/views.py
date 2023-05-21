@@ -9,14 +9,10 @@ from users.serializers import SubscribeSerializer
 from api_foodgram.filters import IngredientSearchFilter, RecipeFilter
 from api_foodgram.models import Basket, FavoriteRecipe, Ingredient, Recipe, Tag
 from api_foodgram.pagination import PagePagination
-from api_foodgram.permissions import (AuthorAdminOrReadOnly, AuthorOnly,
-                                      SubscribeUser)
-from api_foodgram.serializers import (BasketSerializer,
-                                      FavoriteRecipeSerializer,
-                                      IngredientSerializer,
-                                      RecipeCreateSerializer,
-                                      RecipeHelpSerializer, RecipeSerializer,
-                                      TagSerializer)
+from api_foodgram.permissions import AuthorAdminOrReadOnly, SubscribeUser
+from api_foodgram.serializers import (  # FavoriteRecipeSerializer,
+    BasketSerializer, IngredientSerializer, RecipeCreateSerializer,
+    RecipeHelpSerializer, RecipeSerializer, TagSerializer)
 from api_foodgram.utils import get_basket
 
 
@@ -35,7 +31,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-
     @action(detail=True,
             methods=['post', 'delete'],
             permission_classes=[permissions.IsAuthenticated])
@@ -45,7 +40,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         if request.method == 'POST':
             if Basket.objects.filter(user=user,
-                                             recipe=recipe).exists():
+                                     recipe=recipe).exists():
                 message = f'{recipe} уже добавлен в список покупок'
                 return Response({'errors': message},
                                 status=status.HTTP_400_BAD_REQUEST)
@@ -83,14 +78,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
                                 status=status.HTTP_400_BAD_REQUEST)
             serializer = RecipeHelpSerializer(data=request.data)
             if serializer.is_valid(raise_exception=True):
-                serializer.save(author=user,
-                           )
+                serializer.save(author=user)
                 return Response(serializer.data,
                                 status=status.HTTP_201_CREATED)
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
         if not FavoriteRecipe.objects.filter(user=user,
-                                     recipe=recipe).exists():
+                                             recipe=recipe).exists():
             message = f'{recipe} не найден'
             return Response({'errors': message},
                             status=status.HTTP_404_NOT_FOUND)
@@ -145,7 +139,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
             subscribe = get_object_or_404(
                 Subscribe,
                 user=self.request.user,
-                is_subscribed=unsub
+                is_subscribed=unsubs
             )
         except status.HTTP_404_NOT_FOUND:
             message = f'Автор {unsubs} отсутствут в Ваших подписках.'

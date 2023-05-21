@@ -2,9 +2,7 @@ import base64
 import uuid
 
 from django.core.files.base import ContentFile
-from django.shortcuts import get_object_or_404
-from rest_framework import mixins, serializers, status, viewsets
-from users.models import Subscribe, User
+from rest_framework import serializers, status
 from users.serializers import CustomUserSerializer
 
 from api_foodgram.models import (Basket, FavoriteRecipe, Ingredient,
@@ -64,7 +62,7 @@ class IngredientsRecipeSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'measurement_unit'
-            )
+        )
 
 
 class IngredientCreateSerializer(serializers.ModelSerializer):
@@ -155,13 +153,13 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     def validate_tags(self, value):
         tags = value
         if not tags:
-            raise ValidationError(
+            raise serializers.ValidationError(
                 {'tags': 'Необходимо выбрать хотябы один тег'},
                 status.HTTP_400_BAD_REQUEST)
         tags_part = []
         for tag in tags:
             if tag in tags_part:
-                raise ValidationError(
+                raise serializers.ValidationError(
                     {'tags': 'этот тег уже добавлен'},
                     status.HTTP_400_BAD_REQUEST)
             tags_part.append(tag)
@@ -185,8 +183,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         data_ingredients = validated_data.pop('ingredients')
         data_tags_id = validated_data.pop('tags')
         recipe_create = Recipe.objects.create(**validated_data)
-        self.tags_ingredients_create(
-             data_ingredients, data_tags_id, recipe_create)
+        self.tags_ingredients_create(data_ingredients,
+                                     data_tags_id, recipe_create)
         return recipe_create
 
     def update(self, instance, validated_data):
