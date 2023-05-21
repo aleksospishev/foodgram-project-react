@@ -25,12 +25,6 @@ class Ingredient(models.Model):
         verbose_name='Единица измерения',
         max_length=settings.LENG_CHARFIELD,
     )
-    # text = models.TextField(
-    #     verbose_name='Описание',
-    #     help_text='Опишите где можно приобрести/чем заменить',
-    #     blank=True,
-    #     null=True
-    # )
 
     class Meta:
         ordering = ('id',)
@@ -55,7 +49,8 @@ class Tag(models.Model):
     color = models.CharField(
         verbose_name='Цвет',
         max_length=settings.LENG_HEX,
-        help_text='цвет в формате HEX'
+        help_text='цвет в формате HEX',
+        unique=True
     )
     slug = models.SlugField(
         verbose_name='Слаг',
@@ -99,21 +94,17 @@ class Recipe(models.Model):
     name = models.CharField(
         verbose_name='Название блюда',
         help_text='Введите название блюда',
-        blank=True,
         max_length=settings.LENG_CHARFIELD,
         db_index=True
     )
     text = models.TextField(
         verbose_name='Описание',
-        help_text="Опишите историю блюда, ваши впечатления или что то иное",
-        default=None,
-        null=True
+        help_text="Опишите историю блюда, ваши впечатления или что то иное"
     )
     image = models.ImageField(
         verbose_name='Картинка',
         help_text='Выберите фото блюда',
-        upload_to='api_foodgram/media/',
-        null=True,
+        upload_to='api_foodgram/media/'
     )
     ingredients = models.ManyToManyField(
         Ingredient,
@@ -133,7 +124,7 @@ class Recipe(models.Model):
         help_text='Выберите тег')
 
     class Meta:
-        ordering = ('id',)
+        ordering = ('-pub_date',)
         default_related_name = 'recipe'
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
@@ -145,7 +136,6 @@ class Recipe(models.Model):
     def __str__(self):
         return (f'{self.name} для {self.tags} временем приготовления '
                 f'{self.cooking_time}'
-                # f'сложностью {self.review_author} '
                 f'добавлен')
 
 
@@ -163,8 +153,8 @@ class IngredientsRecipe(models.Model):
     )
     amount = models.FloatField(
         verbose_name='Количество ингредиентов',
+        validators=[MinValueValidator(1)]
     )
-
 
     class Meta:
 
