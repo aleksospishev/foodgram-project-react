@@ -3,18 +3,20 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from users.models import Subscribe, User
-from users.serializers import SubscribeSerializer
 
 from api_foodgram.filters import IngredientSearchFilter, RecipeFilter
 from api_foodgram.models import Basket, FavoriteRecipe, Ingredient, Recipe, Tag
 from api_foodgram.pagination import PagePagination
 from api_foodgram.permissions import AuthorAdminOrReadOnly, SubscribeUser
-from api_foodgram.serializers import (BasketSerializer, IngredientSerializer,
+from api_foodgram.serializers import (BasketSerializer,
+                                      FavoriteRecipeSerializer,
+                                      IngredientSerializer,
                                       RecipeCreateSerializer,
-                                      RecipeHelpSerializer, RecipeSerializer,
+                                      RecipeSerializer,
                                       TagSerializer)
 from api_foodgram.utils import get_basket
+from users.models import Subscribe, User
+from users.serializers import SubscribeSerializer
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -77,9 +79,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 message = f'{recipe} уже добавлен в избранное'
                 return Response({'errors': message},
                                 status=status.HTTP_400_BAD_REQUEST)
-            serializer = RecipeHelpSerializer(data=request.data)
+            serializer = FavoriteRecipeSerializer(data=request.data)
             if serializer.is_valid(raise_exception=True):
-                serializer.save(author=user)
+                serializer.save(user=user,
+                                recipe=recipe)
                 return Response(serializer.data,
                                 status=status.HTTP_201_CREATED)
             return Response(serializer.errors,

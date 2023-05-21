@@ -3,10 +3,10 @@ import uuid
 
 from django.core.files.base import ContentFile
 from rest_framework import serializers, status
-from users.serializers import CustomUserSerializer
 
 from api_foodgram.models import (Basket, FavoriteRecipe, Ingredient,
                                  IngredientsRecipe, Recipe, Tag)
+from users.serializers import CustomUserSerializer
 
 
 class ImageSerializer(serializers.ImageField):
