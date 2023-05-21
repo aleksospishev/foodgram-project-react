@@ -1,7 +1,6 @@
-from django.contrib import admin
-
 from api_foodgram.models import (FavoriteRecipe, Ingredient, IngredientsRecipe,
                                  Recipe, Tag)
+from django.contrib import admin
 from users.models import Subscribe, User
 
 
