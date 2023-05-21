@@ -1,8 +1,8 @@
 from rest_framework import serializers, status
 
-from users.models import User, Subscribe
-from api_foodgram.models import Recipe
 import api_foodgram.serializers
+from api_foodgram.models import Recipe
+from users.models import Subscribe, User
 
 
 class CustomUserSerializer(serializers.ModelSerializer):

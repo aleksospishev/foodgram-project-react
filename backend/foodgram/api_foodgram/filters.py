@@ -1,39 +1,36 @@
-from django_filters.rest_framework import filters, FilterSet
+from django_filters.rest_framework import FilterSet, filters
 
 from users.models import User
 
-from .models import Ingredient, Tag, Recipe
+from .models import Ingredient, Recipe, Tag
 
 
 class RecipeFilter(FilterSet):
     tags = filters.ModelMultipleChoiceFilter(
         field_name='tags__slug',
         to_field_name='slug',
-        # label='tags',
         queryset=Tag.objects.all()
     )
     author = filters.ModelChoiceFilter(
         queryset=User.objects.all()
     )
     is_in_shopping_cart = filters.NumberFilter(
-        method='filter_basket'
-    )
+        method='is_in_shopping_cart_method')
     is_favorited = filters.NumberFilter(
-        method='filter_favorite'
-    )
+        method='is_favorited_method')
 
     class Meta:
         model = Recipe
-        fields = ('tags', 'author', 'is_in_shopping_cart', 'is_favorited')
+        fields = ('tags', 'author', 'is_favorited', 'is_in_shopping_cart')
 
-    def is_favorite(self, queryset, name, value):
+    def is_favorited_method(self, queryset, name, value):
         if self.request.user.is_authenticated and value:
-            return queryset.filter(favorite__author=self.request.user)
+            return queryset.filter(Favorite_recipe__user=self.request.user)
         return queryset
 
-    def in_basket(self, queryset, name, value):
+    def is_in_shopping_cart_method(self, queryset, name, value):
         if self.request.user.is_authenticated and value:
-            return queryset.filter(in_basket__author=self.request.user)
+            return queryset.filter(basket__user=self.request.user)
         return queryset
 
 

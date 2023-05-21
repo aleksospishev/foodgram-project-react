@@ -1,10 +1,8 @@
 from django.contrib import admin
 
-from users.models import User, Subscribe
-
-from api_foodgram.models import (FavoriteRecipe, Ingredient,
-                    IngredientsRecipe, Recipe, Tag,
-                    )
+from api_foodgram.models import (FavoriteRecipe, Ingredient, IngredientsRecipe,
+                                 Recipe, Tag)
+from users.models import Subscribe, User
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -35,6 +33,11 @@ class RecipeAdmin(admin.ModelAdmin):
                     ]
     search_fields = ['name', 'author']
     list_filter = ['name', 'author', 'cooking_time', 'pub_date']
+
+    def count_in_favorite(self, obj):
+        return obj.favorite.all().count()
+
+    count_in_favorite.short_description = 'кол-во раз добавления в избранное'
 
 
 class IngredientAdmin(admin.ModelAdmin):
