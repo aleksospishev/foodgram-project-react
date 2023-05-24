@@ -6,7 +6,7 @@ from api_foodgram.serializers import (BasketSerializer,
                                       FavoriteRecipeSerializer,
                                       IngredientSerializer,
                                       RecipeCreateSerializer, RecipeSerializer,
-                                      TagSerializer)
+                                      TagSerializer, RecipeHelpSerializer)
 from api_foodgram.utils import get_basket
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -45,19 +45,22 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 message = f'{recipe} уже добавлен в список покупок'
                 return Response({'errors': message},
                                 status=status.HTTP_400_BAD_REQUEST)
-            serializer = BasketSerializer(data=request.data)
-            if serializer.is_valid(raise_exception=True):
-                serializer.save(user=user, recipe=recipe)
-                return Response(serializer.data,
-                                status=status.HTTP_201_CREATED)
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+            serializer = RecipeHelpSerializer(recipe=recipe)
+            Basket.save(recipe=recipe)
+        #     serializer = BasketSerializer(data=request.data)
+        #     if serializer.is_valid(raise_exception=True):
+        #         serializer.save(user=user, recipe=recipe)
+            return Response(serializer.data,
+                            status=status.HTTP_201_CREATED)
+            # return Response(serializer.errors,
+            #                 status=status.HTTP_400_BAD_REQUEST)
         if not Basket.objects.filter(user=user,
                                      recipe=recipe).exists():
             message = f'{recipe} не найден'
             return Response({'errors': message},
                             status=status.HTTP_404_NOT_FOUND)
-        Basket.objects.get(recipe=recipe).delete()
+        Basket.objects.get(user=user,
+                           recipe=recipe).delete()
         message = f'{recipe} удален из вашей корзины'
         return Response(message, status=status.HTTP_204_NO_CONTENT)
 
@@ -83,14 +86,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
                                 recipe=recipe)
                 return Response(serializer.data,
                                 status=status.HTTP_201_CREATED)
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+            # return Response(serializer.errors,
+            #                 status=status.HTTP_400_BAD_REQUEST)
         if not FavoriteRecipe.objects.filter(user=user,
                                              recipe=recipe).exists():
             message = f'{recipe} не найден'
             return Response({'errors': message},
                             status=status.HTTP_404_NOT_FOUND)
-        FavoriteRecipe.objects.get(recipe=recipe).delete()
+        FavoriteRecipe.objects.get(user=user,
+                                   recipe=recipe).delete()
         message = f'{recipe} удален из избранного'
         return Response(message, status=status.HTTP_204_NO_CONTENT)
 

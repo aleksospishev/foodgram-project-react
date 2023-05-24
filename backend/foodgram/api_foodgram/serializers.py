@@ -60,7 +60,8 @@ class IngredientsRecipeSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'name',
-            'measurement_unit'
+            'measurement_unit',
+            'amount'
         )
 
 
@@ -68,7 +69,7 @@ class IngredientCreateSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all()
     )
-    amount = serializers.IntegerField()
+    # amount = serializers.IntegerField()
 
     class Meta:
         model = IngredientsRecipe
@@ -143,8 +144,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         for ingred in ingredients:
             if ingred in ingredient_part:
                 raise serializers.ValidationError(
-                    {'ingredients': 'данный ингредиен уже добавлен рецепт'},
-                    status.HTTP_400_BAD_REQUEST
+                    {'ingredients': 'данный ингредиен уже добавлен рецепт'}
                 )
             ingredient_part.append(ingred)
         return value
@@ -153,14 +153,12 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         tags = value
         if not tags:
             raise serializers.ValidationError(
-                {'tags': 'Необходимо выбрать хотябы один тег'},
-                status.HTTP_400_BAD_REQUEST)
+                {'tags': 'Необходимо выбрать хотябы один тег'})
         tags_part = []
         for tag in tags:
             if tag in tags_part:
                 raise serializers.ValidationError(
-                    {'tags': 'этот тег уже добавлен'},
-                    status.HTTP_400_BAD_REQUEST)
+                    {'tags': 'этот тег уже добавлен'})
             tags_part.append(tag)
         return value
 
@@ -172,7 +170,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     def tags_ingredients_create(self, ingredients, tags, model):
         for ingredient in ingredients:
-            IngredientsRecipe.objects.update_or_create(
+            IngredientsRecipe.objects.bulk_create(
                 recipe=model,
                 ingredient=ingredient['id'],
                 amount=ingredient['amount'])
@@ -190,6 +188,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         data_ingredients = validated_data.pop('ingredients')
         data_tags_id = validated_data.pop('tags')
         instance.ingredients.clear()
+        instance.tags.clear()
         self.tags_ingredients_create(data_ingredients, data_tags_id, instance)
         return super().update(instance, validated_data)
 
@@ -201,28 +200,28 @@ class RecipeHelpSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'name', 'image', 'cooking_time')
 
 
-class BasketSerializer(serializers.ModelSerializer):
-    name = serializers.ReadOnlyField(
-        source='recipe.name',
-        read_only=True
-    )
-    image = serializers.ImageField(
-        source='recipe.image',
-        read_only=True
-    )
-    cooking_time = serializers.IntegerField(
-        source='recipe.cooking_time',
-        read_only=True
-    )
-    id = serializers.PrimaryKeyRelatedField(
-        source='recipe',
-        read_only=True
-    )
-
+class BasketSerializer(RecipeHelpSerializer):
+    # name = serializers.ReadOnlyField(
+    #     source='recipe.name',
+    #     read_only=True
+    # )
+    # image = serializers.ImageField(
+    #     source='recipe.image',
+    #     read_only=True
+    # )
+    # cooking_time = serializers.IntegerField(
+    #     source='recipe.cooking_time',
+    #     read_only=True
+    # )
+    # id = serializers.PrimaryKeyRelatedField(
+    #     source='recipe',
+    #     read_only=True
+    # )
+    #
     class Meta:
         model = Basket
         fields = ('id', 'name', 'image', 'cooking_time')
-
+    pass
 
 class FavoriteRecipeSerializer(serializers.ModelSerializer):
     name = serializers.ReadOnlyField(
