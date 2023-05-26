@@ -67,19 +67,19 @@ class RecipeViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if request.method == 'POST':
             if FavoriteRecipe.objects.filter(user=user,
-                                     recipe=recipe).exists():
+                                             recipe=recipe).exists():
                 message = f'{recipe} уже добавлен в избранное'
                 return Response({'errors': message})
             FavoriteRecipe.objects.create(user=user, recipe=recipe)
             serializer = RecipeHelpSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         if not FavoriteRecipe.objects.filter(user=user,
-                                     recipe=recipe).exists():
+                                             recipe=recipe).exists():
             message = f'{recipe} не найден'
             return Response({'errors': message},
                             status=status.HTTP_404_NOT_FOUND)
         FavoriteRecipe.objects.get(user=user,
-                           recipe=recipe).delete()
+                                   recipe=recipe).delete()
         message = f'{recipe} удален из избранного'
         return Response(message, status=status.HTTP_204_NO_CONTENT)
 

@@ -4,9 +4,8 @@ import uuid
 from api_foodgram.models import (Basket, FavoriteRecipe, Ingredient,
                                  IngredientsRecipe, Recipe, Tag)
 from django.core.files.base import ContentFile
-from django.shortcuts import get_object_or_404
-from rest_framework import serializers, status
-from users.models import Subscribe, User
+from rest_framework import serializers
+from users.models import Subscribe
 from users.serializers import CustomUserSerializer
 
 
@@ -82,7 +81,8 @@ class IngredientCreateSerializer(serializers.ModelSerializer):
 class RecipeSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
     author = CustomUserSerializer()
-    ingredients = IngredientsRecipeSerializer(many=True, source='recipe_ingredients')
+    ingredients = IngredientsRecipeSerializer(many=True,
+                                              source='recipe_ingredients')
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 

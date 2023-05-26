@@ -1,5 +1,4 @@
-from django.shortcuts import get_object_or_404
-from rest_framework import serializers, status
+from rest_framework import serializers
 from users.models import Subscribe, User
 
 
@@ -22,4 +21,3 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
-
