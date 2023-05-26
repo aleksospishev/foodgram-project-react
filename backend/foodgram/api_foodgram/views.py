@@ -2,11 +2,10 @@ from api_foodgram.filters import IngredientSearchFilter, RecipeFilter
 from api_foodgram.models import Basket, FavoriteRecipe, Ingredient, Recipe, Tag
 from api_foodgram.pagination import PagePagination
 from api_foodgram.permissions import AuthorAdminOrReadOnly, SubscribeUser
-from api_foodgram.serializers import (BasketSerializer,
-                                      FavoriteRecipeSerializer,
-                                      IngredientSerializer,
-                                      RecipeCreateSerializer, RecipeSerializer,
-                                      TagSerializer, RecipeHelpSerializer)
+from api_foodgram.serializers import (IngredientSerializer,
+                                      RecipeCreateSerializer,
+                                      RecipeHelpSerializer, RecipeSerializer,
+                                      SubscribeSerializer, TagSerializer)
 from api_foodgram.utils import get_basket
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -14,7 +13,6 @@ from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from users.models import Subscribe, User
-from users.serializers import SubscribeSerializer
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -43,17 +41,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
             if Basket.objects.filter(user=user,
                                      recipe=recipe).exists():
                 message = f'{recipe} уже добавлен в список покупок'
-                return Response({'errors': message},
-                                status=status.HTTP_400_BAD_REQUEST)
-            serializer = RecipeHelpSerializer(recipe=recipe)
-            Basket.save(recipe=recipe)
-        #     serializer = BasketSerializer(data=request.data)
-        #     if serializer.is_valid(raise_exception=True):
-        #         serializer.save(user=user, recipe=recipe)
-            return Response(serializer.data,
-                            status=status.HTTP_201_CREATED)
-            # return Response(serializer.errors,
-            #                 status=status.HTTP_400_BAD_REQUEST)
+                return Response({'errors': message})
+            Basket.objects.create(user=user, recipe=recipe)
+            serializer = RecipeHelpSerializer(recipe)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         if not Basket.objects.filter(user=user,
                                      recipe=recipe).exists():
             message = f'{recipe} не найден'
@@ -76,25 +67,19 @@ class RecipeViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if request.method == 'POST':
             if FavoriteRecipe.objects.filter(user=user,
-                                             recipe=recipe).exists():
+                                     recipe=recipe).exists():
                 message = f'{recipe} уже добавлен в избранное'
-                return Response({'errors': message},
-                                status=status.HTTP_400_BAD_REQUEST)
-            serializer = FavoriteRecipeSerializer(data=request.data)
-            if serializer.is_valid(raise_exception=True):
-                serializer.save(user=user,
-                                recipe=recipe)
-                return Response(serializer.data,
-                                status=status.HTTP_201_CREATED)
-            # return Response(serializer.errors,
-            #                 status=status.HTTP_400_BAD_REQUEST)
+                return Response({'errors': message})
+            FavoriteRecipe.objects.create(user=user, recipe=recipe)
+            serializer = RecipeHelpSerializer(recipe)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         if not FavoriteRecipe.objects.filter(user=user,
-                                             recipe=recipe).exists():
+                                     recipe=recipe).exists():
             message = f'{recipe} не найден'
             return Response({'errors': message},
                             status=status.HTTP_404_NOT_FOUND)
         FavoriteRecipe.objects.get(user=user,
-                                   recipe=recipe).delete()
+                           recipe=recipe).delete()
         message = f'{recipe} удален из избранного'
         return Response(message, status=status.HTTP_204_NO_CONTENT)
 
@@ -150,7 +135,6 @@ class SubscribeViewSet(viewsets.ModelViewSet):
         except status.HTTP_404_NOT_FOUND:
             message = f'Автор {unsubs} отсутствут в Ваших подписках.'
             return Response(
-                {'errors': message}, status.HTTP_400_BAD_REQUEST
-            )
+                {'errors': message})
         subscribe.delete()
         return Response(status.HTTP_204_NO_CONTENT)
