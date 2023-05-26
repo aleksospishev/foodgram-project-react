@@ -151,7 +151,7 @@ class IngredientsRecipe(models.Model):
     )
     amount = models.FloatField(
         verbose_name='Количество ингредиентов',
-        validators=[MinValueValidator(1)]
+        validators=[MinValueValidator(0.01)]
     )
 
     class Meta:
@@ -164,7 +164,7 @@ class IngredientsRecipe(models.Model):
                 name='unique_ingredients')]
 
     def __str__(self):
-        return f'{self.recipe} {self.ingredient}{self.amount}'
+        return f'{self.ingredient}{self.amount}'
 
 
 class FavoriteRecipe(models.Model):
