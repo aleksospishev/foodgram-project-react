@@ -14,8 +14,8 @@ def get_basket(user):
         amounts=Sum('amount')
     ).order_by('amounts')
     basket_text = (
-        'Список покупок.' + 'Выбрано рецептов:' + str(user_basket.count())+ '\n'
-    )
+        'Список покупок.' + 'Выбрано рецептов:' + str(user_basket.count()) +
+        '\n')
     for ingredient in ingredient_amount:
         basket_text += (
             f'{ingredient["ingredient__name"]} - '
