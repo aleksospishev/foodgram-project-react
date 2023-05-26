@@ -14,12 +14,12 @@ def get_basket(user):
         amounts=Sum('amount')
     ).order_by('amounts')
     basket_text = (
-        'Список покупок.' + 'Выбрано рецептов:' + str(user_basket.count())+'\n'
+        'Список покупок.' + 'Выбрано рецептов:' + str(user_basket.count())+ '\n'
     )
     for ingredient in ingredient_amount:
         basket_text += (
             f'{ingredient["ingredient__name"]} - '
             f'{ingredient["amounts"]} '
             f'{ingredient["ingredient__measurement_unit"]}\n'
-         )
+        )
     return HttpResponse(basket_text, content_type='text/plain')
