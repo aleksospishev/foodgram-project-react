@@ -65,26 +65,26 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv(
-            'DB_ENGINE',
-            default='django.db.backends.postgresql'
-        ),
-        'NAME': os.getenv('DB_NAME', default='postgreasql'),
-        'USER': os.getenv('POSTGRES_USER', default='postgreasql'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgreasql'),
-        'HOST': os.getenv('DB_HOST', default='db'),
-        'PORT': os.getenv('DB_PORT', default='1111')
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': os.getenv(
+#             'DB_ENGINE',
+#             default='django.db.backends.postgresql'
+#         ),
+#         'NAME': os.getenv('DB_NAME', default='postgreasql'),
+#         'USER': os.getenv('POSTGRES_USER', default='postgreasql'),
+#         'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgreasql'),
+#         'HOST': os.getenv('DB_HOST', default='db'),
+#         'PORT': os.getenv('DB_PORT', default='1111')
+#     }
+# }
 
 AUTH_PASSWORD_VALIDATORS = [
     {

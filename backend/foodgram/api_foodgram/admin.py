@@ -32,6 +32,7 @@ class RecipeAdmin(admin.ModelAdmin):
                     ]
     search_fields = ['name', 'author']
     list_filter = ['name', 'author', 'cooking_time', 'pub_date']
+    readonly_fields = ('count_in_favorite',)
 
     def count_in_favorite(self, obj):
         return obj.favorite.all().count()

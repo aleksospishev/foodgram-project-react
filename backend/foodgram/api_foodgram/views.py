@@ -5,7 +5,7 @@ from api_foodgram.permissions import AuthorAdminOrReadOnly, SubscribeUser
 from api_foodgram.serializers import (IngredientSerializer,
                                       RecipeCreateSerializer,
                                       RecipeHelpSerializer, RecipeSerializer,
-                                      SubscribeSerializer, TagSerializer)
+                                      TagSerializer, SubscribeSerializer)
 from api_foodgram.utils import get_basket
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -65,16 +65,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def favorite(self, request, *args, **kwargs):
         recipe = get_object_or_404(Recipe, id=self.kwargs.get('pk'))
         user = self.request.user
+        fav_recipe = FavoriteRecipe.objects.filter(user=user,
+                                             recipe=recipe).exists()
         if request.method == 'POST':
-            if FavoriteRecipe.objects.filter(user=user,
-                                             recipe=recipe).exists():
+            if fav_recipe:
                 message = f'{recipe} уже добавлен в избранное'
                 return Response({'errors': message})
             FavoriteRecipe.objects.create(user=user, recipe=recipe)
             serializer = RecipeHelpSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        if not FavoriteRecipe.objects.filter(user=user,
-                                             recipe=recipe).exists():
+        if not fav_recipe:
             message = f'{recipe} не найден'
             return Response({'errors': message},
                             status=status.HTTP_404_NOT_FOUND)
