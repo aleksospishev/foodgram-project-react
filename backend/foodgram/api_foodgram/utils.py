@@ -6,13 +6,12 @@ from .models import IngredientsRecipe
 
 def get_basket(user):
     user_basket = user.basket.all()
-    recipe_id = user_basket.values_list('recipe', flat=True)
     ingredient_amount = IngredientsRecipe.objects.filter(
-        recipe__in=recipe_id).values(
+        recipe__basket__user=user).values(
         'ingredient__name',
         'ingredient__measurement_unit').annotate(
         amounts=Sum('amount')
-    ).order_by('amounts')
+    ).order_by('ingredient__name')
     basket_text = (
         'Список покупок.' + '\n'
         + 'Выбрано рецептов:' + str(user_basket.count()) + '\n')

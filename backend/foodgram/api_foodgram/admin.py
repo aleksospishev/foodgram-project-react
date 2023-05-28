@@ -28,13 +28,15 @@ class RecipeAdmin(admin.ModelAdmin):
                     'text',
                     'cooking_time',
                     'author',
-                    'pub_date'
+                    'pub_date',
+                    'count_in_favorite',
                     ]
     search_fields = ['name', 'author']
     list_filter = ['name', 'author', 'cooking_time', 'pub_date']
+    readonly_fields = ('count_in_favorite',)
 
     def count_in_favorite(self, obj):
-        return obj.favorite.all().count()
+        return obj.Favorite_recipe.all().count()
 
     count_in_favorite.short_description = 'кол-во раз добавления в избранное'
 

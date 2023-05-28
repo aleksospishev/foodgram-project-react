@@ -36,17 +36,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def shopping_cart(self, request, **kwargs):
         recipe = get_object_or_404(Recipe, id=self.kwargs.get('pk'))
         user = self.request.user
-
+        basket_recipe = Basket.objects.filter(user=user,
+                                              recipe=recipe).exists()
         if request.method == 'POST':
-            if Basket.objects.filter(user=user,
-                                     recipe=recipe).exists():
+            if basket_recipe:
                 message = f'{recipe} уже добавлен в список покупок'
                 return Response({'errors': message})
             Basket.objects.create(user=user, recipe=recipe)
             serializer = RecipeHelpSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        if not Basket.objects.filter(user=user,
-                                     recipe=recipe).exists():
+        if not basket_recipe:
             message = f'{recipe} не найден'
             return Response({'errors': message},
                             status=status.HTTP_404_NOT_FOUND)
@@ -65,16 +64,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def favorite(self, request, *args, **kwargs):
         recipe = get_object_or_404(Recipe, id=self.kwargs.get('pk'))
         user = self.request.user
+        fav_recipe = FavoriteRecipe.objects.filter(user=user,
+                                                   recipe=recipe).exists()
         if request.method == 'POST':
-            if FavoriteRecipe.objects.filter(user=user,
-                                             recipe=recipe).exists():
+            if fav_recipe:
                 message = f'{recipe} уже добавлен в избранное'
                 return Response({'errors': message})
             FavoriteRecipe.objects.create(user=user, recipe=recipe)
             serializer = RecipeHelpSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        if not FavoriteRecipe.objects.filter(user=user,
-                                             recipe=recipe).exists():
+        if not fav_recipe:
             message = f'{recipe} не найден'
             return Response({'errors': message},
                             status=status.HTTP_404_NOT_FOUND)
@@ -130,7 +129,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
             subscribe = get_object_or_404(
                 Subscribe,
                 user=self.request.user,
-                is_subscribed=unsubs
+                author=unsubs
             )
         except status.HTTP_404_NOT_FOUND:
             message = f'Автор {unsubs} отсутствут в Ваших подписках.'
