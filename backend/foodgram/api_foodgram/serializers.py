@@ -1,10 +1,11 @@
 import base64
 import uuid
 
-from api_foodgram.models import (Basket, FavoriteRecipe, Ingredient,
-                                 IngredientsRecipe, Recipe, Tag)
 from django.core.files.base import ContentFile
 from rest_framework import serializers
+
+from api_foodgram.models import (Basket, FavoriteRecipe, Ingredient,
+                                 IngredientsRecipe, Recipe, Tag)
 from users.models import Subscribe
 from users.serializers import CustomUserSerializer
 

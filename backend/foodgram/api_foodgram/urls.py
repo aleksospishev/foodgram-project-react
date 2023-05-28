@@ -1,8 +1,9 @@
+from django.urls import include, path, re_path
+from rest_framework.routers import DefaultRouter
+
 from api_foodgram.views import (IngredientViewSet, RecipeViewSet,
                                 SubscribeViewSet, SubscriptionsViewSet,
                                 TagViewSet)
-from django.urls import include, path, re_path
-from rest_framework.routers import DefaultRouter
 
 recipe_router = DefaultRouter()
 
