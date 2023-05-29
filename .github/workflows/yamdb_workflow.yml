@@ -43,7 +43,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           with:
-          context: ./foodgram/backend
+          context: ./backend/foodgram
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
 
