@@ -82,14 +82,13 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
-          script: |
+          username: ${{ secrets.USERNAME }}
+          privateKey: ${{ secrets.PRIVATE_KEY }}
+          passshare: ${{ secrets.PASSHARE }}
+          command: |
             sudo docker-compose stop
             sudo docker-compose rm web
             sudo docker-compose rm infra-frontend
-#            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram:latest
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
