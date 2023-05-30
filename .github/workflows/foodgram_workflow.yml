@@ -79,23 +79,13 @@ jobs:
       - build_and_push_to_docker_hub_frontend
     steps:
       - name: executing remote ssh commands to deploy
-        uses: appleboy/ssh-action@v0.1.4
-        env:
-          DB_ENGINE: ${{ secrets.DB_ENGINE }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           privateKey: ${{ secrets.PRIVATE_KEY }}
           passshare: ${{ secrets.PASSHARE }}
           command: |
-            sudo docker-compose stop
-            sudo docker-compose rm web
-            sudo docker-compose rm infra-frontend
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
@@ -103,6 +93,10 @@ jobs:
             echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+            
+            sudo docker-compose stop
+            sudo docker-compose rm web
+            sudo docker-compose rm infra-frontend
             sudo docker-compose pull web
             sudo docker-compose pull infra-frontend
             sudo docker-compose up -d
