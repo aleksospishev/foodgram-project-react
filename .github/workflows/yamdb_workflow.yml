@@ -73,12 +73,12 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs:  build_and_push_to_docker_hub_backend
-    if:
-      contains('
-      refs/heads/master
-      refs/heads/main
-      ', github.ref)
+    needs:  build_and_push_to_docker_hub_frontend
+#    if:
+#      contains('
+#      refs/heads/master
+#      refs/heads/main
+#      ', github.ref)
     steps:
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
