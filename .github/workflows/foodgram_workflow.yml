@@ -80,6 +80,13 @@ jobs:
     steps:
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
+        env:
+          DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
+          DB_NAME=${{ secrets.DB_NAME }} >> .env
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
+          DB_HOST=${{ secrets.DB_HOST }} >> .env
+          DB_PORT=${{ secrets.DB_PORT }} >> .env
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
