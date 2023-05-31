@@ -14,8 +14,10 @@ services:
     volumes:
       - ../frontend/:/app/result_build/
   web:
-    build:
-      context: ../backend/foodgram
+    image: aleksospishev/foodgram_backend:latest
+#    build:
+#      context: ../backend/foodgram
+#      dockerfile:
     restart: always
     volumes:
       - static_value:/app/static/
