@@ -178,11 +178,11 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return ingredients
 
     def tags_ingredients_create(self, ingredients, tags, model):
-        for ingredient in ingredients:
+        for ingry in ingredients:
             IngredientsRecipe.objects.create(
                 recipe=model,
-                ingredient=ingredient['id'],
-                amount=ingredient['amount'])
+                ingredient=ingry['id'],
+                amount=ingry['amount'])
         model.tags.set(tags)
 
     def create(self, validated_data):
