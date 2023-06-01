@@ -85,8 +85,7 @@ jobs:
           USERNAME: ${{ secrets.USERNAME }}
           KEY: ${{ secrets.SSH_KEY }}
           PASSPHRASE: ${{ secrets.PASSPHRASE }}
-
-          command: |
+          script: |
             cd foodgram/infra
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
