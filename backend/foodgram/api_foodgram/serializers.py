@@ -221,8 +221,8 @@ class SubscribeSerializer(serializers.ModelSerializer):
         if not request or request.user.is_anonymous:
             return False
         return Subscribe.objects.filter(
-            user=request.user,
-            author=obj
+            user=request.user.id,
+            author=obj.id
         ).exists()
 
     def get_recipes(self, obj):
@@ -245,7 +245,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
         if user == author:
             raise serializers.ValidationError(
                 'Нельзя подписаться на самого себя')
-        if Subscribe.objects.filter(author=author, user=user).exists():
+        if Subscribe.objects.filter(author=author.id, user=user.id).exists():
             raise serializers.ValidationError(
                 f'Вы уже подписаны на автора {author}.')
         return data
