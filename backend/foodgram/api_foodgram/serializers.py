@@ -222,8 +222,8 @@ class SubscribeSerializer(serializers.ModelSerializer):
         if not request or request.user.is_anonymous:
             return False
         return Subscribe.objects.filter(
-            user=request.user.id,
-            author=obj.id
+            user=request.user,
+            author=obj
         ).exists()
 
     def get_recipes(self, obj):
