@@ -1,3 +1,9 @@
+from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import mixins, permissions, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
 from api_foodgram.filters import IngredientSearchFilter, RecipeFilter
 from api_foodgram.models import Basket, FavoriteRecipe, Ingredient, Recipe, Tag
 from api_foodgram.pagination import PagePagination
@@ -7,11 +13,6 @@ from api_foodgram.serializers import (IngredientSerializer,
                                       RecipeHelpSerializer, RecipeSerializer,
                                       SubscribeSerializer, TagSerializer)
 from api_foodgram.utils import get_basket
-from django.shortcuts import get_object_or_404
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import mixins, permissions, status, viewsets
-from rest_framework.decorators import action
-from rest_framework.response import Response
 from users.models import Subscribe, User
 from users.serializers import CustomUserSerializer
 
@@ -140,13 +141,13 @@ class ListModelViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 #         return Response(status.HTTP_204_NO_CONTENT)
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    permission_classes = (IsCurrentUserOrAdminOrReadOnly, )
-    pagination_class = ApiPagination
+    permission_classes = (UserMeOrUserProfile, )
+    pagination_class = PagePagination
     serializer_class = CustomUserSerializer
 
     @action(detail=True,
             methods=['post', 'delete'],
-            permission_classes=[IsAuthenticated])
+            permission_classes=[SubscribeUser])
     def subscribe(self, request, *args, **kwargs):
         """Создание и удаление подписки."""
         author = get_object_or_404(User, id=self.kwargs.get('pk'))
@@ -170,12 +171,11 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False,
             methods=['get'],
-            permission_classes=[IsAuthenticated])
+            permission_classes=[SubscribeUser])
     def subscriptions(self, request):
         """Отображает все подписки пользователя."""
         subscribes = Subscribe.objects.filter(user=self.request.user)
         pages = self.paginate_queryset(subscribes)
-        serializer = SubscribeSerializer(pages,
-                                      many=True,
-                                      context={'request': request})
+        serializer = SubscribeSerializer(pages, many=True,
+                                         context={'request': request})
         return self.get_paginated_response(serializer.data)
