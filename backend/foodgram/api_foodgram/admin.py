@@ -1,8 +1,8 @@
 from django.contrib import admin
+from users.models import Subscribe, User
 
 from api_foodgram.models import (FavoriteRecipe, Ingredient, IngredientsRecipe,
                                  Recipe, Tag)
-from users.models import Subscribe, User
 
 
 class UserAdmin(admin.ModelAdmin):
