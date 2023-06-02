@@ -40,7 +40,7 @@ class IngredientSerializer(serializers.ModelSerializer):
             'name',
             'measurement_unit'
         )
-        read_only_fields = '__all__'
+        read_only_fields = '__all__',
 
 
 class IngredientsRecipeSerializer(serializers.ModelSerializer):
