@@ -4,6 +4,7 @@ import uuid
 from api_foodgram.models import (Basket, FavoriteRecipe, Ingredient,
                                  IngredientsRecipe, Recipe, Tag)
 from django.core.files.base import ContentFile
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from users.models import Subscribe
 from users.serializers import CustomUserSerializer
@@ -223,7 +224,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
         if not user or user.is_anonymous:
             return False
         return Subscribe.objects.filter(
-            user=obj.user,
+            user=user,
             author=author
         ).exists()
 
