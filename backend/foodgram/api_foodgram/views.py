@@ -128,8 +128,8 @@ class SubscribeViewSet(viewsets.ModelViewSet):
         try:
             subscribe = get_object_or_404(
                 Subscribe,
-                user=self.request.user,
-                author=unsubs
+                user_id=self.request.user.id,
+                author_id=unsubs.id
             )
         except status.HTTP_404_NOT_FOUND:
             message = f'Автор {unsubs} отсутствут в Ваших подписках.'
