@@ -9,7 +9,7 @@ recipe_router = DefaultRouter()
 recipe_router.register('recipes', RecipeViewSet, basename='recipes')
 recipe_router.register('ingredients', IngredientViewSet)
 recipe_router.register('tags', TagViewSet)
-recipe_router.register('users',UserViewSet)
+recipe_router.register('users', UserViewSet)
 
 
 urlpatterns = [
