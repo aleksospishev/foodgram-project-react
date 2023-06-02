@@ -13,6 +13,7 @@ from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from users.models import Subscribe, User
+from users.serializers import CustomUserSerializer
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -103,37 +104,78 @@ class ListModelViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     pass
 
 
-class SubscriptionsViewSet(ListModelViewSet):
-    serializer_class = SubscribeSerializer
-    pagination_class = PagePagination
-    permission_classes = (SubscribeUser,)
+# class SubscriptionsViewSet(ListModelViewSet):
+#     serializer_class = SubscribeSerializer
+#     pagination_class = PagePagination
+#     permission_classes = (SubscribeUser,)
+#
+#     def get_queryset(self):
+#         subscriptions_queryset = self.request.user.subscriber.all()
+#         subscriptions_list = subscriptions_queryset.values_list(
+#             'author', flat=True
+#         )
+#         return User.objects.filter(id__in=subscriptions_list)
+#
+#
+# class SubscribeViewSet(viewsets.ModelViewSet):
+#     serializer_class = SubscribeSerializer
+#     permission_classes = (SubscribeUser,)
+#
+#     def get_queryset(self):
+#         return self.get_object_or_404(User, id=self.kwargs.get('user_id'))
+#
+#     def delete(self, request, user_id, format=None):
+#         unsubs = get_object_or_404(User, id=user_id)
+#         try:
+#             subscribe = get_object_or_404(
+#                 Subscribe,
+#                 user=request.user,
+#                 author=unsubs
+#             )
+#         except status.HTTP_404_NOT_FOUND:
+#             message = f'Автор {unsubs} отсутствут в Ваших подписках.'
+#             return Response(
+#                 {'errors': message})
+#         subscribe.delete()
+#         return Response(status.HTTP_204_NO_CONTENT)
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    permission_classes = (IsCurrentUserOrAdminOrReadOnly, )
+    pagination_class = ApiPagination
+    serializer_class = CustomUserSerializer
 
-    def get_queryset(self):
-        subscriptions_queryset = self.request.user.subscriber.all()
-        subscriptions_list = subscriptions_queryset.values_list(
-            'author', flat=True
-        )
-        return User.objects.filter(id__in=subscriptions_list)
+    @action(detail=True,
+            methods=['post', 'delete'],
+            permission_classes=[IsAuthenticated])
+    def subscribe(self, request, *args, **kwargs):
+        """Создание и удаление подписки."""
+        author = get_object_or_404(User, id=self.kwargs.get('pk'))
+        user = self.request.user
+        if request.method == 'POST':
+            serializer = SubscribeSerializer(
+                data=request.data,
+                context={'request': request, 'author': author})
+            if serializer.is_valid(raise_exception=True):
+                serializer.save(author=author, user=user)
+                return Response({'Подписка успешно создана': serializer.data},
+                                status=status.HTTP_201_CREATED)
+            return Response({'errors': 'Объект не найден'},
+                            status=status.HTTP_404_NOT_FOUND)
+        if Subscribe.objects.filter(author=author, user=user).exists():
+            Subscribe.objects.get(author=author).delete()
+            return Response('Успешная отписка',
+                            status=status.HTTP_204_NO_CONTENT)
+        return Response({'errors': 'Объект не найден'},
+                        status=status.HTTP_404_NOT_FOUND)
 
-
-class SubscribeViewSet(viewsets.ModelViewSet):
-    serializer_class = SubscribeSerializer
-    permission_classes = (SubscribeUser,)
-
-    def get_queryset(self):
-        return self.get_object_or_404(User, id=self.kwargs.get('user_id'))
-
-    def delete(self, request, user_id, format=None):
-        unsubs = get_object_or_404(User, id=user_id)
-        try:
-            subscribe = get_object_or_404(
-                Subscribe,
-                user=request.user,
-                author=unsubs
-            )
-        except status.HTTP_404_NOT_FOUND:
-            message = f'Автор {unsubs} отсутствут в Ваших подписках.'
-            return Response(
-                {'errors': message})
-        subscribe.delete()
-        return Response(status.HTTP_204_NO_CONTENT)
+    @action(detail=False,
+            methods=['get'],
+            permission_classes=[IsAuthenticated])
+    def subscriptions(self, request):
+        """Отображает все подписки пользователя."""
+        subscribes = Subscribe.objects.filter(user=self.request.user)
+        pages = self.paginate_queryset(subscribes)
+        serializer = SubscribeSerializer(pages,
+                                      many=True,
+                                      context={'request': request})
+        return self.get_paginated_response(serializer.data)
