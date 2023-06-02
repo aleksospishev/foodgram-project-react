@@ -219,10 +219,10 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request').user
-        if not request or request.user.is_anonymous:
+        if not request or request.is_anonymous:
             return False
         return Subscribe.objects.filter(
-            user=request.user,
+            user=obj.user,
             author=obj.author
         ).exists()
 
