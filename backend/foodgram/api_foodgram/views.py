@@ -14,6 +14,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from users.models import Subscribe, User
 
+
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (AuthorAdminOrReadOnly,)
@@ -136,4 +137,3 @@ class SubscribeViewSet(viewsets.ModelViewSet):
                 {'errors': message})
         subscribe.delete()
         return Response(status.HTTP_204_NO_CONTENT)
-
