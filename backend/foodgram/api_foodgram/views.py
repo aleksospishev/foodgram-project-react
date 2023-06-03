@@ -125,7 +125,7 @@ class SubscriptionsViewSet(ListModelViewSet):
 
 class SubscribeViewSet(viewsets.ModelViewSet):
     serializer_class = SubscribeSerializer
-    permission_classes = (permissions.IsAuthenticated)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
         return get_object_or_404(
