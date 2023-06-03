@@ -26,7 +26,6 @@ class CreateDeleteModelViewSet(
 ):
     pass
 
-
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (AuthorAdminOrReadOnly,)
@@ -125,10 +124,20 @@ class SubscriptionsViewSet(ListModelViewSet):
 
 class SubscribeViewSet(viewsets.ModelViewSet):
     serializer_class = SubscribeSerializer
-    permission_classes = (SubscribeUser,)
+    permission_classes = (permissions.IsAuthenticated)
 
-    def get_queryset(self):
-        return self.get_object_or_404(User, id=self.kwargs.get('user_id'))
+    def get_queryset(self, request, *args, **kwargs):
+        author = get_object_or_404(User, id=self.kwargs.get('pk'))
+        user = self.request.user
+        serializer = SubscribeSerializer(
+            data=request.data,
+            context={'request': request, 'author': author})
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(author=author, user=user)
+            return Response({'Подписка успешно создана': serializer.data},
+                                status=status.HTTP_201_CREATED)
+        return Response({'errors': 'Объект не найден'},
+                            status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, user_id, format=None):
         unsubs = get_object_or_404(User, id=user_id)
