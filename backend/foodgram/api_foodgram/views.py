@@ -128,18 +128,19 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated)
 
     def get_queryset(self, request, *args, **kwargs):
+        return get_object_or_404(
+            User, id=self.kwargs.get('user_id')
+        )
+
+    def create(self, request, *args, **kwargs):
         author = get_object_or_404(User, id=self.kwargs.get('pk'))
         user = self.request.user
-        serializer = SubscribeSerializer(
-            data=request.data,
-            context={'request': request, 'author_id': author.id})
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(author=author, user=user)
-            return Response({'Подписка успешно создана': serializer.data},
-                            status=status.HTTP_201_CREATED)
-        return Response({'errors': 'Объект не найден'},
-                        status=status.HTTP_404_NOT_FOUND)
-
+        if request.method == 'POST':
+            serializer = SubscribeSerializer(
+                data=request.data,
+                context={'request': request, 'author': author})
+            Subscribe.objects.create(author='author', user='user')
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
     def delete(self, request, user_id, format=None):
         unsubs = get_object_or_404(User, id=user_id)
         try:
