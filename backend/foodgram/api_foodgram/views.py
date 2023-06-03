@@ -27,6 +27,15 @@ class CreateDeleteModelViewSet(
     pass
 
 
+class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (permissions.AllowAny,)
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
+    pagination_class = None
+    filter_backends = (IngredientSearchFilter,)
+    search_fields = ('^name',)
+
+
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (AuthorAdminOrReadOnly,)
@@ -93,15 +102,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
                                    recipe=recipe).delete()
         message = f'{recipe} удален из избранного'
         return Response(message, status=status.HTTP_204_NO_CONTENT)
-
-
-class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (permissions.AllowAny,)
-    queryset = Ingredient.objects.all()
-    serializer_class = IngredientSerializer
-    pagination_class = None
-    filter_backends = (IngredientSearchFilter,)
-    search_fields = ('^name',)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
