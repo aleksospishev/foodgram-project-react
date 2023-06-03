@@ -15,6 +15,18 @@ from rest_framework.response import Response
 from users.models import Subscribe, User
 
 
+class ListModelViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    pass
+
+
+class CreateDeleteModelViewSet(
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
+    pass
+
+
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (AuthorAdminOrReadOnly,)
@@ -96,11 +108,6 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.AllowAny,)
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = (permissions.AllowAny,)
-
-
-class ListModelViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    pass
 
 
 class SubscriptionsViewSet(ListModelViewSet):
