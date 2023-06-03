@@ -132,7 +132,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
         user = self.request.user
         serializer = SubscribeSerializer(
             data=request.data,
-            context={'request': request, 'author': author})
+            context={'request': request, 'author_id': author.id})
         if serializer.is_valid(raise_exception=True):
             serializer.save(author=author, user=user)
             return Response({'Подписка успешно создана': serializer.data},
