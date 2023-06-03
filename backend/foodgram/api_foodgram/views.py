@@ -134,12 +134,11 @@ class SubscribeViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         author = get_object_or_404(User, id=self.kwargs.get('pk'))
-        if request.method == 'POST':
-            serializer = SubscribeSerializer(
-                data=request.data,
-                context={'request': request, 'author': author})
-            Subscribe.objects.create(author='author', user='user')
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = SubscribeSerializer(
+            data=request.data,
+            context={'request': request, 'author': author})
+        Subscribe.objects.create(author='author', user='user')
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, user_id, format=None):
         unsubs = get_object_or_404(User, id=user_id)
