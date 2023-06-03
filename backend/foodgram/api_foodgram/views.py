@@ -141,6 +141,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
                 context={'request': request, 'author': author})
             Subscribe.objects.create(author='author', user='user')
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
     def delete(self, request, user_id, format=None):
         unsubs = get_object_or_404(User, id=user_id)
         try:
