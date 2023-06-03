@@ -239,8 +239,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # author = validated_data.pop('author')
         # user = validated_data.pop('user')
-        subscribe = Subscribe.objects.create(author='author', user='user')
-        return subscribe
+        return Subscribe.objects.create(author='author', user='user')
 
     def validate(self, data):
         if self.context['request'].method != 'POST':
