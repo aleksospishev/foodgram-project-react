@@ -26,6 +26,7 @@ class CreateDeleteModelViewSet(
 ):
     pass
 
+
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (AuthorAdminOrReadOnly,)
