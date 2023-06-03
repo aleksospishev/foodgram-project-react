@@ -136,9 +136,9 @@ class SubscribeViewSet(viewsets.ModelViewSet):
         if serializer.is_valid(raise_exception=True):
             serializer.save(author=author, user=user)
             return Response({'Подписка успешно создана': serializer.data},
-                                status=status.HTTP_201_CREATED)
+                            status=status.HTTP_201_CREATED)
         return Response({'errors': 'Объект не найден'},
-                            status=status.HTTP_404_NOT_FOUND)
+                        status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, user_id, format=None):
         unsubs = get_object_or_404(User, id=user_id)
