@@ -127,14 +127,13 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     serializer_class = SubscribeSerializer
     permission_classes = (permissions.IsAuthenticated)
 
-    def get_queryset(self, request, *args, **kwargs):
+    def get_queryset(self):
         return get_object_or_404(
             User, id=self.kwargs.get('user_id')
         )
 
     def create(self, request, *args, **kwargs):
         author = get_object_or_404(User, id=self.kwargs.get('pk'))
-        user = self.request.user
         if request.method == 'POST':
             serializer = SubscribeSerializer(
                 data=request.data,
