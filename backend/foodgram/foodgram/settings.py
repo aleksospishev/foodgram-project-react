@@ -8,7 +8,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv('SECRET_KEY', default='None')
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 # CSRF_TRUSTED_ORIGINS = '158.160.9.142',
