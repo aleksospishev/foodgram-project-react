@@ -19,8 +19,6 @@ recipe_router.register(
     SubscribeViewSet,
     basename='subscribe'
 )
-# recipe_router.register('users', UserViewSet)
-
 
 urlpatterns = [
     re_path(r'^auth/', include('djoser.urls.authtoken')),
