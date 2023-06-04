@@ -120,7 +120,8 @@ class SubscriptionsViewSet(ListModelViewSet):
         subs_id_list = subs_query.values_list('author', flat=True)
         return User.objects.filter(id__in=subs_id_list)
         print(subs_query)
-        print(User.objects.filter(id__in=subs_id_list))
+        print(subs_id_list)
+
 
 class SubscribeViewSet(viewsets.ModelViewSet):
     serializer_class = SubscribeSerializer
