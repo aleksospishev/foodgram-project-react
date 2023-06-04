@@ -90,13 +90,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
                                                    recipe=recipe).exists()
         if request.method == 'POST':
             if fav_recipe:
-                message = f'{recipe} уже добавлен в избранное'
+                message = f'{recipe.name} уже добавлен в избранное'
                 return Response({'errors': message})
             FavoriteRecipe.objects.create(user=user, recipe=recipe)
             serializer = RecipeHelpSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         if not fav_recipe:
-            message = f'{recipe} не найден'
+            message = f'{recipe.name} не найден'
             return Response({'errors': message},
                             status=status.HTTP_404_NOT_FOUND)
         FavoriteRecipe.objects.get(user=user,
