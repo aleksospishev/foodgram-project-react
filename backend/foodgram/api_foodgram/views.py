@@ -5,7 +5,8 @@ from api_foodgram.permissions import AuthorAdminOrReadOnly, SubscribeUser
 from api_foodgram.serializers import (IngredientSerializer,
                                       RecipeCreateSerializer,
                                       RecipeHelpSerializer, RecipeSerializer,
-                                      SubscribeSerializer, TagSerializer)
+                                      SubscribeSerializer, TagSerializer,
+                                      UserSubscribeRepresentSerializer)
 from api_foodgram.utils import get_basket
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -112,12 +113,12 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 class SubscriptionsViewSet(mixins.ListModelMixin,
                            viewsets.GenericViewSet):
-    serializer_class = SubscribeSerializer
+    serializer_class = UserSubscribeRepresentSerializer
     pagination_class = PagePagination
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        return User.objects.filter(subscibe=self.request.user)
+        return User.objects.filter(subscibe__user=self.request.user)
 
 
 class SubscribeViewSet(viewsets.ModelViewSet):
