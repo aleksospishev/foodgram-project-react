@@ -40,19 +40,19 @@ class RecipeAdmin(admin.ModelAdmin):
 
 
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'name', 'measurement_unit']
+    list_display = ['name', 'measurement_unit']
     search_fields = ['name', ]
     list_filter = ['name', ]
 
 
 class TagAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'name', 'color', 'slug']
+    list_display = ['name', 'color', 'slug']
     search_fields = ['name', 'slug']
     list_filter = ['name', 'slug']
 
 
 class FavoriteRecipeAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'recipe', 'user']
+    list_display = ['recipe', 'user']
     search_fields = ['recipe']
     list_filter = ['recipe', 'user']
 
