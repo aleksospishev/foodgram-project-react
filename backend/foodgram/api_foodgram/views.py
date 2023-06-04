@@ -116,11 +116,7 @@ class SubscriptionsViewSet(ListModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        subs_query = self.request.user.subscriber.all()
-        subs_id_list = subs_query.values_list('author', flat=True)
-        print(subs_query)
-        print(subs_id_list)
-        return User.objects.filter(id__in=subs_id_list)
+        return User.objects.filter(subscibe__user=self.request.user)
 
 
 class SubscribeViewSet(viewsets.ModelViewSet):
