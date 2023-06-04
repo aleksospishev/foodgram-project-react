@@ -116,11 +116,11 @@ class SubscriptionsViewSet(ListModelViewSet):
     permission_classes = (SubscribeUser,)
 
     def get_queryset(self, request):
-        subscriptions_queryset = Subscribe.objects.filter(user=self.request.user)
-        pages = self.paginate_queryset(subscriptions_queryset)
+        subscriptions = Subscribe.objects.filter(user=self.request.user)
+        pages = self.paginate_queryset(subscriptions)
         serializer = SubscribeSerializer(pages,
-                                      many=True,
-                                      context={'request': request})
+                                         many=True,
+                                         context={'request': request})
         return self.get_paginated_response(serializer.data)
 
 
