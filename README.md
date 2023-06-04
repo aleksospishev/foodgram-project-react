@@ -93,7 +93,6 @@ sudo docker-compose down -v      - с их удалением
 sudo docker-compose stop         - без удаления
 ```
 
-
 **_данные для входа в админ:_**
 ```
 exam@admin.ru    -email
