@@ -113,13 +113,10 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 class SubscriptionsViewSet(ListModelViewSet):
     serializer_class = SubscribeSerializer
     pagination_class = PagePagination
-    permission_classes = (SubscribeUser,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        subscriptions_queryset = self.request.user.subscriber.all()
-        subscriptions_list = subscriptions_queryset.values_list(
-            'author', flat=True)
-        return User.objects.filter(id__in=subscriptions_list)
+        return Subscribe.objects.filter(user=request.user)
 
 
 class SubscribeViewSet(viewsets.ModelViewSet):
