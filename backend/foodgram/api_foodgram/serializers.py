@@ -5,7 +5,7 @@ from api_foodgram.models import (Basket, FavoriteRecipe, Ingredient,
                                  IngredientsRecipe, Recipe, Tag)
 from django.core.files.base import ContentFile
 from rest_framework import serializers
-from users.models import Subscribe
+from users.models import Subscribe, User
 from users.serializers import CustomUserSerializer
 
 
@@ -300,18 +300,21 @@ class SubscribeSerializer(serializers.ModelSerializer):
     recipes_count = serializers.SerializerMethodField()
 
     class Meta:
-        model = Subscribe
+        model = User
         fields = (
             'email', 'id', 'username', 'first_name', 'last_name',
             'is_subscribed', 'recipes', 'recipes_count'
         )
 
     def get_is_subscribed(self, obj):
-        user = self.context.get('request').user
-        if not user or user.is_anonymous:
+        request = self.context.get('request')
+        if not request or request.user.is_anonymous:
             return False
-        return Subscribe.objects.filter(user=obj.user,
-                                        author=obj.author).exists()
+
+        return Subscribe.objects.filter(
+            user=request.user,
+            author=obj
+        ).exists()
 
     def get_recipes(self, obj):
         request = self.context.get('request')
@@ -325,6 +328,17 @@ class SubscribeSerializer(serializers.ModelSerializer):
     def get_recipes_count(self, obj):
         return obj.recipes.count()
 
+    def create(self, validated_data):
+        author_for_subscribe = get_object_or_404(
+            User,
+            id=self.context['request'].parser_context['kwargs']['user_id']
+        )
+        Subscribe.objects.create(
+            user=self.context['request'].user,
+            subscribing=author_for_subscribe
+        )
+        return author_for_subscribe
+
     def validate(self, data):
         if self.context['request'].method != 'POST':
             return data
@@ -337,3 +351,4 @@ class SubscribeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 f'Вы уже подписаны на автора {author}.')
         return data
+
