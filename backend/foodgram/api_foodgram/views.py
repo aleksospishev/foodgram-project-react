@@ -178,7 +178,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
                     {'errors': 'Подписка существует / подписка на себя'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            serializer.save(author=author, user=user)
+            serializer.bulk_create(author=author, user=user)
             return Response(serializer.data,
                             status=status.HTTP_201_CREATED)
 
