@@ -236,11 +236,11 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
-
-    def create(self, validated_data):
-        # author = self.context.get('author')
-        user = self.context.get('request').user
-        return Subscribe.objects.create(author=user.author, user=user)
+    #
+    # def create(self, validated_data):
+    #     # author = self.context.get('author')
+    #     user = self.context.get('request').user
+    #     return Subscribe.objects.create(author=user.author, user=user)
 
     def validate(self, data):
         if self.context['request'].method != 'POST':
