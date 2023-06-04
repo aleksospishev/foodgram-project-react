@@ -80,7 +80,7 @@ class IngredientCreateSerializer(serializers.ModelSerializer):
 class RecipeSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
     author = CustomUserSerializer()
-    ingredients = IngredientsRecipeSerializer(many=True,
+    ingredients = IngredientCreateSerializer(many=True,
                                               source='recipe_ingredients')
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
