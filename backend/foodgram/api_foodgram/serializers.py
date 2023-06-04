@@ -3,8 +3,8 @@ import uuid
 
 from api_foodgram.models import (Basket, FavoriteRecipe, Ingredient,
                                  IngredientsRecipe, Recipe, Tag)
-from django.shortcuts import get_object_or_404
 from django.core.files.base import ContentFile
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from users.models import Subscribe, User
 from users.serializers import CustomUserSerializer
