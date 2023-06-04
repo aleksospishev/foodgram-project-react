@@ -1,5 +1,5 @@
 from api_foodgram.views import (IngredientViewSet, RecipeViewSet,
-                                SubscribeViewSet, SubscriptionsViewSet,
+                                # SubscribeViewSet, SubscriptionsViewSet,
                                 TagViewSet, UserViewSet)
 from django.urls import include, path, re_path
 from rest_framework.routers import DefaultRouter
