@@ -266,7 +266,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
         )
 
     def create(self, request, *args, **kwargs):
-        author = get_object_or_404(User, id=self.kwargs.get('id'))
+        # author = get_object_or_404(User, id=self.kwargs.get('id'))
         user = request.user
         serializer = SubscribeSerializer(
             data={
