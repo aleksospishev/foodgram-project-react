@@ -180,7 +180,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         for ingry in ingredients_data:
             IngredientsRecipe.objects.update_or_create(
                 recipe=model,
-                ingredient=ingry['ingredient'],
+                ingredient=ingry['id'],
                 amount=ingry['amount'])
         model.tags.set(tags)
 
