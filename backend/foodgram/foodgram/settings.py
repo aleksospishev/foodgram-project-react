@@ -11,7 +11,6 @@ SECRET_KEY = os.getenv('SECRET_KEY', default='None')
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']
-# CSRF_TRUSTED_ORIGINS = '158.160.9.142',
 
 
 INSTALLED_APPS = [
@@ -118,9 +117,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
