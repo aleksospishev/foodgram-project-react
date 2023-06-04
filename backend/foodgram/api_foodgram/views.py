@@ -126,7 +126,6 @@ class SubscriptionsViewSet(ListModelViewSet):
 class SubscribeViewSet(viewsets.ModelViewSet):
     serializer_class = SubscribeSerializer
     permission_classes = (permissions.IsAuthenticated,)
-
     # def get_queryset(self):
     #     return get_object_or_404(
     #         User, id=self.kwargs.get('user_id')
@@ -157,6 +156,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     #             {'errors': message})
     #     subscribe.delete()
     #     return Response(status.HTTP_204_NO_CONTENT)
+
     def subscribe(self, request, **kwargs):
         author = get_object_or_404(User, id=kwargs['pk'])
         user = request.user
