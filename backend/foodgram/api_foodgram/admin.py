@@ -23,10 +23,8 @@ class IngredientLine(admin.TabularInline):
 
 class RecipeAdmin(admin.ModelAdmin):
     inlines = [IngredientLine, ]
-    list_display = ['pk',
-                    'name',
-                    'text',
-                    'cooking_time',
+    list_display = ['name',
+                    'tag',
                     'author',
                     'pub_date',
                     'count_in_favorite',
