@@ -270,7 +270,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
         user = request.user
         serializer = SubscribeSerializer(
             data={
-                'user': user.id,
+                'user': user,
                 'author': kwargs.get('id')},
             context={"request": request})
         Subscribe.objects.create(author='author', user='user')
