@@ -3,6 +3,7 @@ import uuid
 
 from api_foodgram.models import (Basket, FavoriteRecipe, Ingredient,
                                  IngredientsRecipe, Recipe, Tag)
+from django.shortcuts import get_object_or_404
 from django.core.files.base import ContentFile
 from rest_framework import serializers
 from users.models import Subscribe, User
@@ -351,4 +352,3 @@ class SubscribeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 f'Вы уже подписаны на автора {author}.')
         return data
-
