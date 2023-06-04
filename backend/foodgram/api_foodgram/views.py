@@ -56,25 +56,25 @@ class RecipeViewSet(viewsets.ModelViewSet):
             methods=['post', 'delete'],
             permission_classes=[permissions.IsAuthenticated])
     def shopping_cart(self, request, **kwargs):
-        recipe = get_object_or_404(Recipe, id=self.kwargs.get('pk'))
+        recipe = get_object_or_404(Recipe,
+                                   id=self.kwargs.get('pk'))
         user = self.request.user
         basket_recipe = Basket.objects.filter(user=user,
                                               recipe=recipe).exists()
         if request.method == 'POST':
             if basket_recipe:
-                message = f'{recipe} уже добавлен в список покупок'
+                message = f'{recipe.name} уже добавлен в список покупок'
                 return Response({'errors': message})
             Basket.objects.create(user=user, recipe=recipe)
             serializer = RecipeHelpSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         if not basket_recipe:
-            message = f'{recipe} не найден'
+            message = f'{recipe.name} не найден'
             return Response({'errors': message},
                             status=status.HTTP_404_NOT_FOUND)
         Basket.objects.get(user=user,
                            recipe=recipe).delete()
-        message = f'{recipe} удален из вашей корзины'
-        return Response(message, status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, permission_classes=[permissions.IsAuthenticated])
     def download_shopping_cart(self, request):
@@ -101,8 +101,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_404_NOT_FOUND)
         FavoriteRecipe.objects.get(user=user,
                                    recipe=recipe).delete()
-        message = f'{recipe} удален из избранного'
-        return Response(message, status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
