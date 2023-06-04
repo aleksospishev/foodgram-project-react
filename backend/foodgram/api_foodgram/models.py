@@ -134,8 +134,8 @@ class Recipe(models.Model):
                 name='unique_recipe')]
 
     def __str__(self):
-        return (f'{self.name} для {self.tags} временем приготовления '
-                f'{self.cooking_time}'
+        return (f'{self.name} c временем приготовления '
+                f' {self.cooking_time} '
                 f'добавлен')
 
 
