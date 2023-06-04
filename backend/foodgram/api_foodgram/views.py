@@ -157,7 +157,9 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     #             {'errors': message})
     #     subscribe.delete()
     #     return Response(status.HTTP_204_NO_CONTENT)
-    def subscribe (self, request, **kwargs):
+    def subscribe(self, request, **kwargs):
+        author = get_object_or_404(User, id=kwargs['pk'])
+        user = request.user
         if request.method == 'POST':
             serializer = SubscribeSerializer(data={
                 'user': user.id,
