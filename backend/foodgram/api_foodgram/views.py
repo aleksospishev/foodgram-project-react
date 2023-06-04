@@ -110,7 +110,8 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TagSerializer
 
 
-class SubscriptionsViewSet(ListModelViewSet):
+class SubscriptionsViewSet(mixins.ListModelMixin,
+                           viewsets.GenericViewSet):
     serializer_class = SubscribeSerializer
     pagination_class = PagePagination
     permission_classes = (permissions.IsAuthenticated,)
