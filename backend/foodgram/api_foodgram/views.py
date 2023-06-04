@@ -233,7 +233,7 @@ class SubscriptionsViewSet(ListModelViewSet):
 #     #         try:
 #     #             serializer.is_valid(raise_exception=True)
 #     #         except serializer.ValidationError as e:
-#     #             return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
+#     #           return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
 #     #
 #     #         if Subscribe.objects.filter(
 #     #                 user=user,
