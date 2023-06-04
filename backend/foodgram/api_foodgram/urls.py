@@ -20,7 +20,6 @@ recipe_router.register(
     basename='subscribe'
 )
 
-
 urlpatterns = [
     re_path(r'^auth/', include('djoser.urls.authtoken')),
     path('', include(recipe_router.urls)),

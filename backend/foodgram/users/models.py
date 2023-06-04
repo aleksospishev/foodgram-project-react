@@ -61,7 +61,7 @@ class User(AbstractUser):
         ]
 
     def __str__(self):
-        return (f'{self.username}, {self.email}'
+        return (f'{self.username}, {self.email} '
                 f'{self.first_name}, {self.last_name}')
 
 
@@ -81,12 +81,16 @@ class Subscribe(models.Model):
     class Meta:
         verbose_name = 'Мои подписки'
         verbose_name_plural = 'Мои подписки'
-        constraints = [
+        constraints = (
             models.UniqueConstraint(
-                fields=['user', 'author'],
-                name='unique_subscribe'
+                fields=('author', 'user'),
+                name='unique_subscribe',
+            ),
+            models.CheckConstraint(
+                check=~models.Q(author=models.F('user')),
+                name='\nNo self sibscription\n'
             )
-        ]
+        )
 
     def __str__(self):
         return f'{self.user} подписан на {self.author}'

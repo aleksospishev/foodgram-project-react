@@ -5,7 +5,8 @@ from api_foodgram.permissions import AuthorAdminOrReadOnly, SubscribeUser
 from api_foodgram.serializers import (IngredientSerializer,
                                       RecipeCreateSerializer,
                                       RecipeHelpSerializer, RecipeSerializer,
-                                      SubscribeSerializer, TagSerializer)
+                                      SubscribeSerializer, TagSerializer,
+                                      UserSubscribeRepresentSerializer)
 from api_foodgram.utils import get_basket
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -13,6 +14,27 @@ from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from users.models import Subscribe, User
+
+
+class ListModelViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    pass
+
+
+class CreateDeleteModelViewSet(
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
+    pass
+
+
+class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (permissions.AllowAny,)
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
+    pagination_class = None
+    filter_backends = (IngredientSearchFilter,)
+    search_fields = ('^name',)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -83,37 +105,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(message, status=status.HTTP_204_NO_CONTENT)
 
 
-class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (permissions.AllowAny,)
-    queryset = Ingredient.objects.all()
-    serializer_class = IngredientSerializer
-    pagination_class = None
-    filter_backends = (IngredientSearchFilter,)
-    search_fields = ('^name',)
-
-
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.AllowAny,)
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = (permissions.AllowAny,)
 
 
-class ListModelViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    pass
-
-
-class SubscriptionsViewSet(ListModelViewSet):
-    serializer_class = SubscribeSerializer
+class SubscriptionsViewSet(mixins.ListModelMixin,
+                           viewsets.GenericViewSet):
+    serializer_class = UserSubscribeRepresentSerializer
     pagination_class = PagePagination
-    permission_classes = (SubscribeUser,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        subscriptions_queryset = self.request.user.subscriber.all()
-        subscriptions_list = subscriptions_queryset.values_list(
-            'author', flat=True
-        )
-        return User.objects.filter(id__in=subscriptions_list)
+        return User.objects.filter(subscibe__user=self.request.user)
 
 
 class SubscribeViewSet(viewsets.ModelViewSet):
@@ -121,16 +126,19 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     permission_classes = (SubscribeUser,)
 
     def get_queryset(self):
-        return self.get_object_or_404(User, id=self.kwargs.get('user_id'))
+        return get_object_or_404(
+            User, id=self.kwargs.get('user_id')
+        )
 
     def delete(self, request, user_id, format=None):
         unsubs = get_object_or_404(User, id=user_id)
         try:
             subscribe = get_object_or_404(
                 Subscribe,
-                user=request.user,
+                user=self.request.user,
                 author=unsubs
             )
+
         except status.HTTP_404_NOT_FOUND:
             message = f'Автор {unsubs} отсутствут в Ваших подписках.'
             return Response(
