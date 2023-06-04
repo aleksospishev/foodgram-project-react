@@ -24,13 +24,12 @@ class IngredientLine(admin.TabularInline):
 class RecipeAdmin(admin.ModelAdmin):
     inlines = [IngredientLine, ]
     list_display = ['name',
-                    'tags',
                     'author',
                     'pub_date',
                     'count_in_favorite',
                     ]
     search_fields = ['name', 'author']
-    list_filter = ['name', 'author', 'cooking_time', 'pub_date']
+    list_filter = ['name', 'author', 'tags', 'pub_date']
     readonly_fields = ('count_in_favorite',)
 
     def count_in_favorite(self, obj):
