@@ -217,64 +217,85 @@ class SubscriptionsViewSet(ListModelViewSet):
         return User.objects.filter(id__in=subscriptions_list)
 
 
+# class SubscribeViewSet(viewsets.ModelViewSet):
+#     serializer_class = SubscribeSerializer
+#     permission_classes = (permissions.IsAuthenticated,)
+#
+#     # def subscribe(self, request, **kwargs):
+#     #     author = get_object_or_404(User, id=kwargs['pk'])
+#     #     user = request.user
+#     #     if request.method == 'POST':
+#     #         serializer = SubscribeSerializer(data={
+#     #             'user': user.id,
+#     #             'author': kwargs.get('pk')
+#     #         }, context={"request": request})
+#     #
+#     #         try:
+#     #             serializer.is_valid(raise_exception=True)
+#     #         except serializer.ValidationError as e:
+#     #             return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
+#     #
+#     #         if Subscribe.objects.filter(
+#     #                 user=user,
+#     #                 author=author).exists() or author == user:
+#     #             return Response(
+#     #                 {'errors': 'Подписка существует / подписка на себя'},
+#     #                 status=status.HTTP_400_BAD_REQUEST
+#     #             )
+#     #         serializer.bulk_create(author=author, user=user)
+#     #         return Response(serializer.data,
+#     #                         status=status.HTTP_201_CREATED)
+#     #
+#     #     if not Subscribe.objects.filter(
+#     #             user=user,
+#     #             author=author).exists():
+#     #         return Response(
+#     #             {'errors': 'Ошибка отписки (Вы не были подписаны)'},
+#     #             status=status.HTTP_400_BAD_REQUEST
+#     #         )
+#     #     Subscribe.objects.get(
+#     #         user=user,
+#     #         author=author).delete()
+#     #     return Response(
+#     #         'Вы успешно отписаны',
+#     #         status=status.HTTP_204_NO_CONTENT
+#     #     )
+#     def get_queryset(self):
+#         return get_object_or_404(
+#             User, id=self.kwargs.get('user_id')
+#         )
+#
+#     def create(self, request, *args, **kwargs):
+#         # author = get_object_or_404(User, id=self.kwargs.get('id'))
+#         user = request.user
+#         serializer = SubscribeSerializer(
+#             data={
+#                 'user': user,
+#                 'author': kwargs.get('id')},
+#             context={"request": request})
+#         Subscribe.objects.create(author='author', user='user')
+#         return Response(serializer.data, status=status.HTTP_201_CREATED)
+#
+#     def delete(self, request, user_id, format=None):
+#         unsubs = get_object_or_404(User, id=user_id)
+#         try:
+#             subscribe = get_object_or_404(
+#                 Subscribe,
+#                 user=request.user,
+#                 author=unsubs
+#             )
+#         except status.HTTP_404_NOT_FOUND:
+#             message = f'Автор {unsubs} отсутствут в Ваших подписках.'
+#             return Response(
+#                 {'errors': message})
+#         subscribe.delete()
+#         return Response(status.HTTP_204_NO_CONTENT)
 class SubscribeViewSet(viewsets.ModelViewSet):
     serializer_class = SubscribeSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (SubscribeUser,)
 
-    # def subscribe(self, request, **kwargs):
-    #     author = get_object_or_404(User, id=kwargs['pk'])
-    #     user = request.user
-    #     if request.method == 'POST':
-    #         serializer = SubscribeSerializer(data={
-    #             'user': user.id,
-    #             'author': kwargs.get('pk')
-    #         }, context={"request": request})
-    #
-    #         try:
-    #             serializer.is_valid(raise_exception=True)
-    #         except serializer.ValidationError as e:
-    #             return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
-    #
-    #         if Subscribe.objects.filter(
-    #                 user=user,
-    #                 author=author).exists() or author == user:
-    #             return Response(
-    #                 {'errors': 'Подписка существует / подписка на себя'},
-    #                 status=status.HTTP_400_BAD_REQUEST
-    #             )
-    #         serializer.bulk_create(author=author, user=user)
-    #         return Response(serializer.data,
-    #                         status=status.HTTP_201_CREATED)
-    #
-    #     if not Subscribe.objects.filter(
-    #             user=user,
-    #             author=author).exists():
-    #         return Response(
-    #             {'errors': 'Ошибка отписки (Вы не были подписаны)'},
-    #             status=status.HTTP_400_BAD_REQUEST
-    #         )
-    #     Subscribe.objects.get(
-    #         user=user,
-    #         author=author).delete()
-    #     return Response(
-    #         'Вы успешно отписаны',
-    #         status=status.HTTP_204_NO_CONTENT
-    #     )
     def get_queryset(self):
-        return get_object_or_404(
-            User, id=self.kwargs.get('user_id')
-        )
-
-    def create(self, request, *args, **kwargs):
-        # author = get_object_or_404(User, id=self.kwargs.get('id'))
-        user = request.user
-        serializer = SubscribeSerializer(
-            data={
-                'user': user,
-                'author': kwargs.get('id')},
-            context={"request": request})
-        Subscribe.objects.create(author='author', user='user')
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return self.get_object_or_404(User, id=self.kwargs.get('user_id'))
 
     def delete(self, request, user_id, format=None):
         unsubs = get_object_or_404(User, id=user_id)

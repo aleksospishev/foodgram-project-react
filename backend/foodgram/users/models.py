@@ -81,12 +81,16 @@ class Subscribe(models.Model):
     class Meta:
         verbose_name = 'Мои подписки'
         verbose_name_plural = 'Мои подписки'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'author'],
-                name='unique_subscribe'
+        constraints = (
+            UniqueConstraint(
+                fields=('author', 'user'),
+                name='\nRepeat subscription\n',
+            ),
+            models.CheckConstraint(
+                check=~models.Q(author=models.F('user')),
+                name='\nNo self sibscription\n'
             )
-        ]
+        )
 
     def __str__(self):
         return f'{self.user} подписан на {self.author}'

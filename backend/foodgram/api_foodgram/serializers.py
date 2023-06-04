@@ -202,58 +202,58 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class SubscribeSerializer(serializers.ModelSerializer):
-    email = serializers.ReadOnlyField(source='author.email')
-    username = serializers.ReadOnlyField(source='author.username')
-    first_name = serializers.ReadOnlyField(source='author.first_name')
-    last_name = serializers.ReadOnlyField(source='author.last_name')
-    is_subscribed = serializers.SerializerMethodField()
-    recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Subscribe
-        fields = (
-            'email', 'id', 'username', 'first_name', 'last_name',
-            'is_subscribed', 'recipes', 'recipes_count'
-        )
-
-    def get_is_subscribed(self, obj):
-        user = self.context.get('request').user
-        if not user or user.is_anonymous:
-            return False
-        return Subscribe.objects.filter(user=obj,
-                                        author=obj.author).exists()
-
-    def get_recipes(self, obj):
-        request = self.context.get('request')
-        recipes_limit = request.query_params.get('recipes_limit')
-        if recipes_limit is not None:
-            recipes = obj.recipes.all()[:int(recipes_limit)]
-        else:
-            recipes = obj.recipes.all()
-        return RecipeHelpSerializer(recipes, many=True).data
-
-    def get_recipes_count(self, obj):
-        return obj.recipes.count()
-    #
-    # def create(self, validated_data):
-    #     # author = self.context.get('author')
-    #     user = self.context.get('request').user
-    #     return Subscribe.objects.create(author=user.author, user=user)
-
-    def validate(self, data):
-        if self.context['request'].method != 'POST':
-            return data
-        author = self.context.get('author')
-        user = self.context.get('request').user
-        if user == author:
-            raise serializers.ValidationError(
-                'Нельзя подписаться на самого себя')
-        if Subscribe.objects.filter(author=author, user=user).exists():
-            raise serializers.ValidationError(
-                f'Вы уже подписаны на автора {author}.')
-        return data
+# class SubscribeSerializer(serializers.ModelSerializer):
+#     email = serializers.ReadOnlyField(source='author.email')
+#     username = serializers.ReadOnlyField(source='author.username')
+#     first_name = serializers.ReadOnlyField(source='author.first_name')
+#     last_name = serializers.ReadOnlyField(source='author.last_name')
+#     is_subscribed = serializers.SerializerMethodField()
+#     recipes = serializers.SerializerMethodField()
+#     recipes_count = serializers.SerializerMethodField()
+#
+#     class Meta:
+#         model = Subscribe
+#         fields = (
+#             'email', 'id', 'username', 'first_name', 'last_name',
+#             'is_subscribed', 'recipes', 'recipes_count'
+#         )
+#
+#     def get_is_subscribed(self, obj):
+#         user = self.context.get('request').user
+#         if not user or user.is_anonymous:
+#             return False
+#         return Subscribe.objects.filter(user=obj,
+#                                         author=obj.author).exists()
+#
+#     def get_recipes(self, obj):
+#         request = self.context.get('request')
+#         recipes_limit = request.query_params.get('recipes_limit')
+#         if recipes_limit is not None:
+#             recipes = obj.recipes.all()[:int(recipes_limit)]
+#         else:
+#             recipes = obj.recipes.all()
+#         return RecipeHelpSerializer(recipes, many=True).data
+#
+#     def get_recipes_count(self, obj):
+#         return obj.recipes.count()
+#     #
+#     # def create(self, validated_data):
+#     #     # author = self.context.get('author')
+#     #     user = self.context.get('request').user
+#     #     return Subscribe.objects.create(author=user.author, user=user)
+#
+#     def validate(self, data):
+#         if self.context['request'].method != 'POST':
+#             return data
+#         author = self.context.get('author')
+#         user = self.context.get('request').user
+#         if user == author:
+#             raise serializers.ValidationError(
+#                 'Нельзя подписаться на самого себя')
+#         if Subscribe.objects.filter(author=author, user=user).exists():
+#             raise serializers.ValidationError(
+#                 f'Вы уже подписаны на автора {author}.')
+#         return data
 
 # class SubscribeSerializer(serializers.ModelSerializer):
 #     email = serializers.ReadOnlyField(source='author.email')
@@ -288,3 +288,52 @@ class SubscribeSerializer(serializers.ModelSerializer):
 #
 #     def get_recipes_count(self, obj):
 #         return obj.author.recipies.count()
+
+
+class SubscribeSerializer(serializers.ModelSerializer):
+    email = serializers.ReadOnlyField(source='author.email')
+    username = serializers.ReadOnlyField(source='author.username')
+    first_name = serializers.ReadOnlyField(source='author.first_name')
+    last_name = serializers.ReadOnlyField(source='author.last_name')
+    is_subscribed = serializers.SerializerMethodField()
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Subscribe
+        fields = (
+            'email', 'id', 'username', 'first_name', 'last_name',
+            'is_subscribed', 'recipes', 'recipes_count'
+        )
+
+    def get_is_subscribed(self, obj):
+        user = self.context.get('request').user
+        if not user or user.is_anonymous:
+            return False
+        return Subscribe.objects.filter(user=obj.user,
+                                        author=obj.author).exists()
+
+    def get_recipes(self, obj):
+        request = self.context.get('request')
+        recipes_limit = request.query_params.get('recipes_limit')
+        if recipes_limit is not None:
+            recipes = obj.recipes.all()[:int(recipes_limit)]
+        else:
+            recipes = obj.recipes.all()
+        return RecipeHelpSerializer(recipes, many=True).data
+
+    def get_recipes_count(self, obj):
+        return obj.recipes.count()
+
+    def validate(self, data):
+        if self.context['request'].method != 'POST':
+            return data
+        author = self.context.get('author')
+        user = self.context.get('request').user
+        if user == author:
+            raise serializers.ValidationError(
+                'Нельзя подписаться на самого себя')
+        if Subscribe.objects.filter(author=author, user=user).exists():
+            raise serializers.ValidationError(
+                f'Вы уже подписаны на автора {author}.')
+        return data
