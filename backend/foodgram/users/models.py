@@ -84,7 +84,7 @@ class Subscribe(models.Model):
         constraints = (
             models.UniqueConstraint(
                 fields=('author', 'user'),
-                name='\nRepeat subscription\n',
+                name='unique_subscribe',
             ),
             models.CheckConstraint(
                 check=~models.Q(author=models.F('user')),
