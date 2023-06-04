@@ -61,7 +61,7 @@ class User(AbstractUser):
         ]
 
     def __str__(self):
-        return (f'{self.username}, {self.email}'
+        return (f'{self.username}, {self.email} '
                 f'{self.first_name}, {self.last_name}')
 
 
