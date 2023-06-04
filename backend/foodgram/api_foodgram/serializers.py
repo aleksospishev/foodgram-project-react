@@ -169,12 +169,12 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                     {'tags': 'этот тег уже добавлен'})
             tags_part.append(tag)
         return value
-    #
-    # def to_representation(self, instance):
-    #     ingredients = super().to_representation(instance)
-    #     ingredients['ingredients'] = IngredientsRecipeSerializer(
-    #         instance.recipe_ingredients.all(), many=True).data
-    #     return ingredients
+
+    def to_representation(self, instance):
+        ingredients = super().to_representation(instance)
+        ingredients['ingredients'] = IngredientsRecipeSerializer(
+            instance.recipe_ingredients.all(), many=True).data
+        return ingredients
 
     def tags_ingredients_create(self, ingredients_data, tags, model):
         for ingry in ingredients_data:
