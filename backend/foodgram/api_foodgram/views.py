@@ -117,7 +117,7 @@ class SubscriptionsViewSet(mixins.ListModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        return User.objects.filter(subscibe__user=self.request.user)
+        return User.objects.filter(subscibe=self.request.user)
 
 
 class SubscribeViewSet(viewsets.ModelViewSet):
