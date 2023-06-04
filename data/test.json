@@ -1,7 +1,0 @@
-[
-  {
-    "model": "Ingredient",
-    "fields": {"name": "курица",
-    "measurement_unit": "шт"}
-  }
-]
