@@ -82,7 +82,7 @@ class Subscribe(models.Model):
         verbose_name = 'Мои подписки'
         verbose_name_plural = 'Мои подписки'
         constraints = (
-            UniqueConstraint(
+            models.UniqueConstraint(
                 fields=('author', 'user'),
                 name='\nRepeat subscription\n',
             ),
