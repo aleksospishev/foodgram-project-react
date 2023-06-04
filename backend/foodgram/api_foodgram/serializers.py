@@ -80,8 +80,8 @@ class IngredientCreateSerializer(serializers.ModelSerializer):
 class RecipeSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
     author = CustomUserSerializer()
-    ingredients = IngredientCreateSerializer(many=True,
-                                             source='recipe_ingredients')
+    ingredients = IngredientsRecipeSerializer(many=True,
+                                              source='recipe_ingredients')
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
@@ -120,7 +120,8 @@ class RecipeHelpSerializer(serializers.ModelSerializer):
 
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
-    ingredients = IngredientCreateSerializer(many=True)
+    ingredients = IngredientCreateSerializer(many=True,
+                                             write_only=True)
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
         many=True
@@ -176,12 +177,12 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             instance.recipe_ingredients.all(), many=True).data
         return ingredients
 
-    def tags_ingredients_create(self, ingredients_data, tags, model):
-        for ingry in ingredients_data:
+    def tags_ingredients_create(self, ingredients, tags, model):
+        for ingredient in ingredients:
             IngredientsRecipe.objects.update_or_create(
                 recipe=model,
-                ingredient=ingry['id'],
-                amount=ingry['amount'])
+                ingredient=ingredient['id'],
+                amount=ingredient['amount'])
         model.tags.set(tags)
 
     def create(self, validated_data):
