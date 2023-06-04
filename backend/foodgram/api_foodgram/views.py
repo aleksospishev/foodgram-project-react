@@ -126,36 +126,6 @@ class SubscriptionsViewSet(ListModelViewSet):
 class SubscribeViewSet(viewsets.ModelViewSet):
     serializer_class = SubscribeSerializer
     permission_classes = (permissions.IsAuthenticated,)
-    # def get_queryset(self):
-    #     return get_object_or_404(
-    #         User, id=self.kwargs.get('user_id')
-    #     )
-    #
-    # def create(self, request, *args, **kwargs):
-    #     author = get_object_or_404(User, id=self.kwargs.get('pk'))
-    #     user = request.user
-    #     serializer = SubscribeSerializer(
-    #         data={
-    #             'user': user.id,
-    #             'author': kwargs.get('pk')},
-    #         context={"request": request})
-    #     Subscribe.objects.create(author='author', user='user')
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #
-    # def delete(self, request, user_id, format=None):
-    #     unsubs = get_object_or_404(User, id=user_id)
-    #     try:
-    #         subscribe = get_object_or_404(
-    #             Subscribe,
-    #             user=request.user,
-    #             author=unsubs
-    #         )
-    #     except status.HTTP_404_NOT_FOUND:
-    #         message = f'Автор {unsubs} отсутствут в Ваших подписках.'
-    #         return Response(
-    #             {'errors': message})
-    #     subscribe.delete()
-    #     return Response(status.HTTP_204_NO_CONTENT)
 
     def subscribe(self, request, **kwargs):
         author = get_object_or_404(User, id=kwargs['pk'])
@@ -196,3 +166,33 @@ class SubscribeViewSet(viewsets.ModelViewSet):
             'Вы успешно отписаны',
             status=status.HTTP_204_NO_CONTENT
         )
+# def get_queryset(self):
+    #     return get_object_or_404(
+    #         User, id=self.kwargs.get('user_id')
+    #     )
+    #
+    # def create(self, request, *args, **kwargs):
+    #     author = get_object_or_404(User, id=self.kwargs.get('pk'))
+    #     user = request.user
+    #     serializer = SubscribeSerializer(
+    #         data={
+    #             'user': user.id,
+    #             'author': kwargs.get('pk')},
+    #         context={"request": request})
+    #     Subscribe.objects.create(author='author', user='user')
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #
+    # def delete(self, request, user_id, format=None):
+    #     unsubs = get_object_or_404(User, id=user_id)
+    #     try:
+    #         subscribe = get_object_or_404(
+    #             Subscribe,
+    #             user=request.user,
+    #             author=unsubs
+    #         )
+    #     except status.HTTP_404_NOT_FOUND:
+    #         message = f'Автор {unsubs} отсутствут в Ваших подписках.'
+    #         return Response(
+    #             {'errors': message})
+    #     subscribe.delete()
+    #     return Response(status.HTTP_204_NO_CONTENT)
