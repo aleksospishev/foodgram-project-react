@@ -115,7 +115,7 @@ class SubscriptionsViewSet(ListModelViewSet):
     pagination_class = PagePagination
     permission_classes = (permissions.IsAuthenticated,)
 
-    def get_queryset(self):
+    def get_queryset(self, request):
         return Subscribe.objects.filter(user=request.user)
 
 
